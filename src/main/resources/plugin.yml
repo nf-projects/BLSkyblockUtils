@@ -1,0 +1,8 @@
+name: BLSkyblockUtils
+version: '${project.version}'
+main: me.kicksquare.blskyblockutils.BLSkyblockUtils
+api-version: 1.19
+description: Utils for the skyblock mine
+load: POSTWORLD
+softdepend:
+  - Multiverse-Core
