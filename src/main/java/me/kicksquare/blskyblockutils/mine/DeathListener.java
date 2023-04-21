@@ -1,5 +1,6 @@
 package me.kicksquare.blskyblockutils.mine;
 
+import me.kicksquare.blskyblockutils.util.ExperienceUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,13 +15,14 @@ public class DeathListener implements Listener {
         Player p = event.getEntity();
 
         // set dropped XP to 50% of original
-        event.setDroppedExp(event.getDroppedExp() / 2);
+        int xp = ExperienceUtil.getExp(p);
+        ExperienceUtil.changeExp(p, -(xp / 2));
 
         // remove any ores from inventory
         String[] oreNames = {"IRON_ORE", "GOLD_ORE", "DIAMOND_ORE", "EMERALD_ORE",
                 "COAL_ORE", "REDSTONE_ORE", "LAPIS_ORE", "QUARTZ_ORE",
                 "IRON_INGOT", "GOLD_INGOT", "DIAMOND", "EMERALD",
-                "COAL", "REDSTONE", "LAPIS_LAZULI", "QUARTZ"};
+                "COAL", "REDSTONE", "LAPIS_LAZULI", "QUARTZ", "RAW_IRON", "RAW_GOLD"};
 
 
         // loops through the inventory and removes any ores

@@ -44,7 +44,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
             SpawnLocationUtil.generateValidSpawnLocations();
         }, 20 * 5);
 
-        long interval = mainConfig.getLong("respawn-mine-mobs-delay-seconds");
+        long interval = (long) mainConfig.getFloat("respawn-mine-mobs-delay-seconds");
         int limit = mainConfig.getInt("respawn-mine-mobs-limit");
 
         // periodically spawn mobs in the mine
