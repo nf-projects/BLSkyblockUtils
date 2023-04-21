@@ -4,6 +4,7 @@ import de.leonhard.storage.Config;
 import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
+import me.kicksquare.blskyblockutils.mine.DeathListener;
 import me.kicksquare.blskyblockutils.mine.MineSoundListener;
 import me.kicksquare.blskyblockutils.mine.SpawnLocationUtil;
 import org.bukkit.Bukkit;
@@ -51,6 +52,9 @@ public final class BLSkyblockUtils extends JavaPlugin {
 
         // play a sound when you mine ores in the mine
         Bukkit.getPluginManager().registerEvents(new MineSoundListener(), this);
+
+        // halve XP on death and remove all ores from inventory in the mine
+        Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
     }
 
     public Config getMainConfig() {
