@@ -9,7 +9,7 @@ import org.bukkit.entity.Zombie;
 import java.util.List;
 
 public class Spawner {
-    public static void attemptToSpawnMobInMine(List<Location> validSpawnLocations) {
+    public static void attemptToSpawnMobInMine(List<Location> validSpawnLocations, int limit) {
         if (validSpawnLocations.size() == 0) {
             return;
         }
@@ -17,7 +17,7 @@ public class Spawner {
         // if there are already over 150 zombies, skeletons, and creepers combined in the world "mine", don't spawn more
         if (Bukkit.getWorld("mine").getEntitiesByClass(Zombie.class).size() +
                 Bukkit.getWorld("mine").getEntitiesByClass(Skeleton.class).size() +
-                Bukkit.getWorld("mine").getEntitiesByClass(Creeper.class).size() > 50) {
+                Bukkit.getWorld("mine").getEntitiesByClass(Creeper.class).size() > limit) {
             return;
         }
 

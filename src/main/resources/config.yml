@@ -1,0 +1,4 @@
+respawn-mine-mobs-delay-seconds: 0.5
+
+# max number of mobs that can be in the mine at once
+respawn-mine-mobs-limit: 50
