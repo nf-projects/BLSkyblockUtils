@@ -1,27 +1,30 @@
-package me.kicksquare.blskyblockutils.mine;
+package me.kicksquare.blskyblockutils.dungeon;
 
 import me.kicksquare.blskyblockutils.BLSkyblockUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Monster;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SpawnLocationUtil {
+public class DungeonSpawnLocationUtil {
     private static final BLSkyblockUtils plugin = BLSkyblockUtils.getPlugin();
 
     public static void generateValidSpawnLocations() {
-        int minX = -118;
-        int minY = 1;
-        int minZ = -95;
-        int maxX = -1;
-        int maxY = 105;
-        int maxZ = 38;
+        // 0 50 95 || 100 80 -87
 
-        World world = Bukkit.getWorld("mine");
+        int minX = 0;
+        int minY = 50;
+        int minZ = -86;
+        int maxX = 100;
+        int maxY = 80;
+        int maxZ = 95;
+
+        World world = Bukkit.getWorld("dungeon");
 
         List<Location> spawnLocations = new ArrayList<>();
         int maxAttempts = 50000;
@@ -67,7 +70,7 @@ public class SpawnLocationUtil {
             attempts++;
         }
 
-        System.out.println("Generated " + spawnLocations.size() + " valid spawn locations in " + attempts + " attempts");
-        plugin.validSpawnLocations = spawnLocations;
+        System.out.println("DUNGEON: Generated " + spawnLocations.size() + " valid spawn locations in " + attempts + " attempts");
+        plugin.validDungeonSpawnLocations = spawnLocations;
     }
 }

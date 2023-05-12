@@ -8,7 +8,7 @@ import org.bukkit.entity.Zombie;
 
 import java.util.List;
 
-public class Spawner {
+public class MineSpawner {
     public static void attemptToSpawnMobInMine(List<Location> validSpawnLocations, int limit) {
         if (validSpawnLocations.size() == 0) {
             return;

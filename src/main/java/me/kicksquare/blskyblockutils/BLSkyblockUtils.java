@@ -4,24 +4,31 @@ import de.leonhard.storage.Config;
 import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.mobs.ActiveMob;
+import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.DeathListener;
 import me.kicksquare.blskyblockutils.mine.MineSoundListener;
-import me.kicksquare.blskyblockutils.mine.SpawnLocationUtil;
+import me.kicksquare.blskyblockutils.mine.MineSpawnLocationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import static me.kicksquare.blskyblockutils.mine.Spawner.attemptToSpawnMobInMine;
+import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.killOldDungeonMobs;
+import static me.kicksquare.blskyblockutils.mine.MineSpawner.attemptToSpawnMobInMine;
+import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.attemptToSpawnMobInDungeon;
 
 public final class BLSkyblockUtils extends JavaPlugin {
     private static BLSkyblockUtils plugin;
     private Config mainConfig;
 
-    public List<Location> validSpawnLocations = new ArrayList<>();
+    public List<Location> validMineSpawnLocations = new ArrayList<>();
+    public List<Location> validDungeonSpawnLocations = new ArrayList<>();
 
     public static BLSkyblockUtils getPlugin() {
         return plugin;
@@ -40,21 +47,41 @@ public final class BLSkyblockUtils extends JavaPlugin {
 
         // generate valid mine spawn locations
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-            this.getLogger().info("Generating spawn locations");
-            SpawnLocationUtil.generateValidSpawnLocations();
+            this.getLogger().info("Generating mine spawn locations");
+            MineSpawnLocationUtil.generateValidSpawnLocations();
         }, 20 * 5);
 
-        long interval = (long) mainConfig.getFloat("respawn-mine-mobs-delay-seconds");
-        int limit = mainConfig.getInt("respawn-mine-mobs-limit");
+        // generate valid dungeon spawn locations
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            this.getLogger().info("Generating dungeon spawn locations");
+            DungeonSpawnLocationUtil.generateValidSpawnLocations();
+        }, 20 * 5);
+
+        // twice a second
+        long interval = 10L;
+        int mineLimit = mainConfig.getInt("respawn-mine-mobs-limit");
 
         // periodically spawn mobs in the mine
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToSpawnMobInMine(validSpawnLocations, limit), 20 * 60, interval * 20); // every 0.5 seconds, but 60 seconds after server start
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToSpawnMobInMine(validMineSpawnLocations, mineLimit), 20 * 60, interval); // every 0.5 seconds, but 60 seconds after server start
 
         // play a sound when you mine ores in the mine
         Bukkit.getPluginManager().registerEvents(new MineSoundListener(), this);
 
         // halve XP on death and remove all ores from inventory in the mine
         Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
+
+
+        // DUNGEON SPAWNING:
+        MythicBukkit mythicBukkit = MythicBukkit.inst();
+
+        int dungeonLimit = 17;
+
+        // periodically spawn mobs in the dungeon
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToSpawnMobInDungeon(validDungeonSpawnLocations, dungeonLimit, mythicBukkit), 0, interval); // every 0.5 seconds, but 60 seconds after server start
+
+        // every 10 minutes, kill off old dungeon mobs
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> killOldDungeonMobs(mythicBukkit), 0, 60 * 10 * 20);
+
     }
 
     public Config getMainConfig() {
