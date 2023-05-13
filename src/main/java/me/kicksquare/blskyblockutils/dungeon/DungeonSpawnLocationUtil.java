@@ -15,13 +15,11 @@ public class DungeonSpawnLocationUtil {
     private static final BLSkyblockUtils plugin = BLSkyblockUtils.getPlugin();
 
     public static void generateValidSpawnLocations() {
-        // 0 50 95 || 100 80 -87
-
         int minX = 0;
         int minY = 50;
         int minZ = -86;
         int maxX = 100;
-        int maxY = 80;
+        int maxY = 72;
         int maxZ = 95;
 
         World world = Bukkit.getWorld("dungeon");
