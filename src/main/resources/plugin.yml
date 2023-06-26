@@ -6,3 +6,9 @@ description: Utils for the skyblock mine
 load: POSTWORLD
 softdepend:
   - Multiverse-Core
+commands:
+  getCustomSpawnEgg:
+    description: Get a custom spawn egg
+    usage: /<command> <entity>
+    permission: blskyblockutils.getcustomspawnegg
+    aliases: [getegg, getspawnegg]
