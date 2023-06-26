@@ -1,5 +1,7 @@
 package me.kicksquare.blskyblockutils.spawneggs;
 
+import de.leonhard.storage.Config;
+import de.leonhard.storage.sections.FlatFileSection;
 import me.kicksquare.blskyblockutils.BLSkyblockUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,6 +25,7 @@ public class SpawnEggManager {
     public SpawnEggManager(BLSkyblockUtils plugin) {
         this.plugin = plugin;
         mythicMobInfoMap = loadMythicMobInfo();
+        System.out.println("SpawnEggManager.SpawnEggManager: mythicMobInfoMap = " + mythicMobInfoMap);
         spawnedMythicMobs = new HashMap<>();
     }
 
@@ -126,19 +129,21 @@ public class SpawnEggManager {
     }
 
     private Map<String, MythicMobInfo> loadMythicMobInfo() {
+        Config mainConfig = plugin.getMainConfig();
+        FlatFileSection configSection = mainConfig.getSection("mythicMobs");
+
         Map<String, MythicMobInfo> mobInfoMap = new HashMap<>();
-        ConfigurationSection configSection = plugin.getConfig().getConfigurationSection("mythicMobs");
 
         if (configSection != null) {
-            for (String key : configSection.getKeys(false)) {
-                ConfigurationSection mobSection = configSection.getConfigurationSection(key);
+            for (String key : configSection.keySet()) {
+                FlatFileSection mobSection = configSection.getSection(key);
 
                 if (mobSection == null) {
                     continue;
                 }
 
                 String mythicMobName = mobSection.getString("name");
-                String spawnEggName = ChatColor.translateAlternateColorCodes('&', mobSection.getString("spawnEggName"));
+                String spawnEggName =ChatColor.translateAlternateColorCodes('&', mobSection.getString("spawnEggName"));
                 int minutesAlive = mobSection.getInt("minutesAlive");
                 List<String> allowedWorlds = mobSection.getStringList("allowedWorlds");
                 List<String> commandsOnDeath = mobSection.getStringList("commandsOnDeath");
