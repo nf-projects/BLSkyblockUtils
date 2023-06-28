@@ -41,15 +41,15 @@ public class DungeonSpawner {
 
         // constant: list of possible mob type names
         List<String> mobTypes = new ArrayList<>();
-        mobTypes.add("banditema1_em");
-        mobTypes.add("banditema2_em");
-        mobTypes.add("banditema3_em");
-        mobTypes.add("banditemb1_em");
-        mobTypes.add("banditemb2_em");
-        mobTypes.add("banditemb3_em");
-        mobTypes.add("banditemc1_em");
-        mobTypes.add("banditemc2_em");
-        mobTypes.add("banditemc3_em");
+        mobTypes.add("banditema_em");
+        mobTypes.add("banditema_em");
+        mobTypes.add("banditema_em");
+        mobTypes.add("banditemb_em");
+        mobTypes.add("banditemb_em");
+        mobTypes.add("banditemb_em");
+        mobTypes.add("banditemc_em");
+        mobTypes.add("banditemc_em");
+        mobTypes.add("banditemc_em");
 
         // randomly select a mob type to spawn
         int randomMobTypeIndex = (int) (Math.random() * mobTypes.size());
