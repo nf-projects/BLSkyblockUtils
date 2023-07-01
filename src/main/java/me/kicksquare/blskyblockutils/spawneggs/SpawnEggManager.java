@@ -10,8 +10,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -45,6 +47,9 @@ public class SpawnEggManager {
         spawnEgg = NBTUtil.setNBTString(spawnEgg, "boss_mm_name", spawnEggName);
         ItemMeta spawnEggMeta = spawnEgg.getItemMeta();
         spawnEggMeta.setDisplayName(ChatColor.RED + "Spawn " + spawnEggName);
+        // make it glow
+        spawnEggMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        spawnEggMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         spawnEgg.setItemMeta(spawnEggMeta);
 
         player.getInventory().addItem(spawnEgg);
@@ -106,6 +111,18 @@ public class SpawnEggManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                // Find the active boss fight instance
+                ActiveBossFight activeBossFight = activeBossFights.stream()
+                        .filter(bossFight -> bossFight.getMythicMobName().equals(mythicMobName))
+                        .findFirst()
+                        .orElse(null);
+
+                // If the active boss fight is not found or cancelled, stop this task
+                if (activeBossFight == null || activeBossFight.isCancelled()) {
+                    this.cancel();
+                    return;
+                }
+
                 despawnMythicMob(mythicMobName);
                 player.sendMessage(ChatColor.RED + formatName(mythicMobName) + " has despawned!");
                 activeBossFights.removeIf(bossFight -> bossFight.getMythicMobName().equals(mythicMobName));
@@ -118,6 +135,18 @@ public class SpawnEggManager {
 
             @Override
             public void run() {
+                // Find the active boss fight instance
+                ActiveBossFight activeBossFight = activeBossFights.stream()
+                        .filter(bossFight -> bossFight.getMythicMobName().equals(mythicMobName))
+                        .findFirst()
+                        .orElse(null);
+
+                // If the active boss fight is not found or cancelled, stop this repeating task
+                if (activeBossFight == null || activeBossFight.isCancelled()) {
+                    this.cancel();
+                    return;
+                }
+
                 if (remainingTime <= 0) {
                     this.cancel();
                     return;
@@ -134,6 +163,18 @@ public class SpawnEggManager {
         String mythicMobName = e.getMob().getType().getInternalName();
         if (!spawnEggNames.contains(mythicMobName)) {
             return;
+        }
+
+        // find the ActiveBossFight instance and set the isCancelled flag to true
+        ActiveBossFight activeBossFight = null;
+        for (ActiveBossFight bossFight : activeBossFights) {
+            if (bossFight.getMythicMobName().equals(mythicMobName)) {
+                activeBossFight = bossFight;
+                break;
+            }
+        }
+        if (activeBossFight != null) {
+            activeBossFight.setCancelled(true);
         }
 
         // try to get the player who spawned the boss
@@ -181,7 +222,7 @@ public class SpawnEggManager {
         despawnMythicMob(mythicMobName);
 
         // command format: /mm mobs spawn [mob_name]:<level> <amount> <world,x,y,z,yaw,pitch> Spawns mobs with the provided name.
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm mobs spawn " + mythicMobName + ":1 1 " + location.getWorld().getName() + "," + location.getX() + "," + location.getY() + "," + location.getZ() + "," + location.getYaw() + "," + location.getPitch());
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm mobs spawn " + mythicMobName + ":1 1 dungeon,48.0,72.0,0.0,0.0,0.0");
     }
 
     public void despawnAllMythicMobs() {

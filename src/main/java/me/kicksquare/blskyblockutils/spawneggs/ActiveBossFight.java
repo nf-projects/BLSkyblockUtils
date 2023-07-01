@@ -3,6 +3,7 @@ package me.kicksquare.blskyblockutils.spawneggs;
 public class ActiveBossFight {
     public String playerName;
     public String bossName;
+    private boolean isCancelled;
 
     public ActiveBossFight(String playerName, String bossName) {
         this.playerName = playerName;
@@ -15,5 +16,13 @@ public class ActiveBossFight {
 
     public String getPlayerName() {
         return playerName;
+    }
+
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    public void setCancelled(boolean isCancelled) {
+        this.isCancelled = isCancelled;
     }
 }

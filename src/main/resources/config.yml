@@ -2,25 +2,3 @@ respawn-mine-mobs-delay-seconds: 0.5
 
 # max number of mobs that can be in the mine at once
 respawn-mine-mobs-limit: 50
-
-
-# Custom Spawn Egg Stuff
-mythicMobs:
-#  customZombie:
-#    name: CustomZombie
-#    spawnEggName: '&6Custom Zombie'
-#    minutesAlive: 5
-#    allowedWorlds:
-#      - world
-#      - world_nether
-#    commandsOnDeath:
-#      - give %PLAYER% diamond 1
-#
-#  customSkeleton:
-#    name: CustomSkeleton
-#    spawnEggName: '&bCustom Skeleton'
-#    minutesAlive: 10
-#    allowedWorlds:
-#      - world
-#    commandsOnDeath:
-#      - give %PLAYER% emerald 1
