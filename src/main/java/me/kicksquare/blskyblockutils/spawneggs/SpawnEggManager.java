@@ -23,9 +23,9 @@ public class SpawnEggManager {
     private final BLSkyblockUtils plugin;
     private final MythicBukkit mythicBukkit;
 
-    private final List<String> spawnEggNames = Arrays.asList("Ergeox");
+    private final List<String> spawnEggNames = Arrays.asList("ergeox");
     private final List<BossReward> bossRewards = Arrays.asList(
-            new BossReward("Ergeox", new String[] {
+            new BossReward("ergeox", new String[] {
                     "mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
             }));
     private List<ActiveBossFight> activeBossFights = new ArrayList<>();
@@ -107,7 +107,7 @@ public class SpawnEggManager {
             @Override
             public void run() {
                 despawnMythicMob(mythicMobName);
-                player.sendMessage(ChatColor.RED + mythicMobName + " has despawned!");
+                player.sendMessage(ChatColor.RED + formatName(mythicMobName) + " has despawned!");
                 activeBossFights.removeIf(bossFight -> bossFight.getMythicMobName().equals(mythicMobName));
             }
         }.runTaskLater(plugin, 20 * 60 * 10);
@@ -123,7 +123,7 @@ public class SpawnEggManager {
                     return;
                 }
 
-                player.sendMessage(ChatColor.YELLOW + mythicMobName + " will despawn in " + remainingTime / 60 + " minutes and " + remainingTime % 60 + " seconds.");
+                player.sendMessage(ChatColor.YELLOW + formatName(mythicMobName) + " will despawn in " + remainingTime / 60 + " minutes and " + remainingTime % 60 + " seconds.");
                 remainingTime -= 30;
             }
         }.runTaskTimer(plugin, 20 * 30, 20 * 30);
@@ -147,12 +147,12 @@ public class SpawnEggManager {
 
         // if we couldn't find the player, just return and broadcast the death
         if (playerName == null) {
-            Bukkit.broadcastMessage(ChatColor.RED + mythicMobName + " has been slain by an unknown player!");
+            Bukkit.broadcastMessage(ChatColor.RED + formatName(mythicMobName) + " has been slain by an unknown player!");
             return;
         }
 
         // otherwise, broadcast the death and give the player a reward
-        Bukkit.broadcastMessage(ChatColor.RED + mythicMobName + " has been slain by " + playerName + "!");
+        Bukkit.broadcastMessage(ChatColor.RED + formatName(mythicMobName) + " has been slain by " + playerName + "!");
         Player player = Bukkit.getPlayer(playerName);
 
         // give the player a reward
@@ -166,6 +166,10 @@ public class SpawnEggManager {
         }
 
         activeBossFights.removeIf(bossFight -> bossFight.getMythicMobName().equals(mythicMobName));
+    }
+
+    private String formatName(String mythicMobName) {
+        return mythicMobName.substring(0, 1).toUpperCase() + mythicMobName.substring(1).toLowerCase();
     }
 
 
