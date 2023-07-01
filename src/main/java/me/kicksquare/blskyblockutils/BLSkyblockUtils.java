@@ -88,7 +88,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> killOldDungeonMobs(mythicBukkit), 0, 60 * 10 * 20);
 
         // Custom Spawn Eggs
-        spawnEggManager = new SpawnEggManager(this);
+        spawnEggManager = new SpawnEggManager(this, mythicBukkit);
         getCommand("getCustomSpawnEgg").setExecutor(new CustomSpawnEggCommand(this, spawnEggManager));
         getServer().getPluginManager().registerEvents(new CustomSpawnEggListener(this, spawnEggManager), this);
     }

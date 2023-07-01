@@ -2,157 +2,187 @@ package me.kicksquare.blskyblockutils.spawneggs;
 
 import de.leonhard.storage.Config;
 import de.leonhard.storage.sections.FlatFileSection;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import me.kicksquare.blskyblockutils.BLSkyblockUtils;
+import me.kicksquare.blskyblockutils.util.NBTUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpawnEggManager {
 
     private final BLSkyblockUtils plugin;
-    private final Map<String, MythicMobInfo> mythicMobInfoMap;
-    private final Map<String, String> spawnedMythicMobs;
+    private final MythicBukkit mythicBukkit;
 
-    public SpawnEggManager(BLSkyblockUtils plugin) {
+    private final List<String> spawnEggNames = Arrays.asList("Ergeox");
+    private final List<BossReward> bossRewards = Arrays.asList(
+            new BossReward("Ergeox", new String[] {
+                    "mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
+            }));
+    private List<ActiveBossFight> activeBossFights = new ArrayList<>();
+
+    public SpawnEggManager(BLSkyblockUtils plugin, MythicBukkit mythicBukkit) {
         this.plugin = plugin;
-        mythicMobInfoMap = loadMythicMobInfo();
-        System.out.println("SpawnEggManager.SpawnEggManager: mythicMobInfoMap = " + mythicMobInfoMap);
-        spawnedMythicMobs = new HashMap<>();
+        this.mythicBukkit = mythicBukkit;
     }
 
+    // returns true if it's a valid spawn egg name
     public boolean giveCustomSpawnEgg(Player player, String spawnEggName) {
-        MythicMobInfo info = mythicMobInfoMap.get(spawnEggName);
-        if (info == null) {
+        if(!spawnEggNames.contains(spawnEggName)) {
             return false;
         }
 
-        ItemStack spawnEgg = info.createSpawnEgg();
+        ItemStack spawnEgg = new ItemStack(Material.OCELOT_SPAWN_EGG);
+        spawnEgg = NBTUtil.setNBTString(spawnEgg, "boss_mm_name", spawnEggName);
+        ItemMeta spawnEggMeta = spawnEgg.getItemMeta();
+        spawnEggMeta.setDisplayName(ChatColor.RED + "Spawn " + spawnEggName);
+        spawnEgg.setItemMeta(spawnEggMeta);
+
         player.getInventory().addItem(spawnEgg);
+        player.sendMessage(ChatColor.GREEN + "You have been given a " + spawnEggName + " spawn egg!");
+
         return true;
     }
 
-    public void handleSpawnEggInteraction(PlayerInteractEvent event) {
-        ItemStack item = event.getItem();
-        if (item == null || !item.hasItemMeta()) {
-            return;
-        }
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null || !meta.hasDisplayName()) {
-            return;
-        }
-
-        String spawnEggName = ChatColor.stripColor(meta.getDisplayName());
-        MythicMobInfo mobInfo = mythicMobInfoMap.get(spawnEggName);
-        if (mobInfo == null) {
-            return;
-        }
-
+    public void handleSpawnEggPlaced(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (!mobInfo.getAllowedWorlds().contains(player.getWorld().getName())) {
-            player.sendMessage("You can't use this spawn egg in this world.");
+
+        if(event.getItem() == null || event.getItem().getType() != Material.OCELOT_SPAWN_EGG) {
             return;
         }
 
-        if (spawnedMythicMobs.containsKey(mobInfo.getMythicMobName())) {
-            player.sendMessage("A mob of this type is already alive.");
+        String nbtString = NBTUtil.getNBTString(event.getItem(), "boss_mm_name");
+        if(nbtString == null) {
             return;
         }
 
-        Location spawnLocation = player.getLocation().add(0, 1, 0);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm m s " + mobInfo.getMythicMobName() + " " + player.getName() + " " + spawnLocation.toString());
+        // at this point, we can cancel the event
+        event.setCancelled(true);
 
-        spawnedMythicMobs.put(mobInfo.getMythicMobName(), player.getName());
-        startMythicMobTimer(mobInfo);
-        item.setAmount(item.getAmount() - 1);
-    }
+        String mythicMobName = nbtString;
 
-    private void startMythicMobTimer(MythicMobInfo mobInfo) {
-        Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
-            private int remainingMinutes = mobInfo.getMinutesAlive();
+        if (!spawnEggNames.contains(mythicMobName)) {
+            plugin.getLogger().warning("Invalid spawn egg name: " + mythicMobName);
+            return;
+        }
+
+        // bedrock players can't spawn bosses
+        if (player.getName().startsWith("*")) {
+            player.sendMessage(ChatColor.RED + "Bedrock players currently cannot spawn bosses! Sorry for the inconvenience.");
+            return;
+        }
+
+        // can only be spawned in the "dungeon" world
+        if (!event.getClickedBlock().getWorld().getName().equals("dungeon")) {
+            player.sendMessage(ChatColor.RED + "You can only spawn this mob in the dungeon world!");
+            return;
+        }
+
+        // only one boss fight at a time
+        if (activeBossFights.size() > 0) {
+            player.sendMessage(ChatColor.RED + "There is already a boss fight in progress!");
+            return;
+        }
+
+        Location location = event.getClickedBlock().getLocation().add(0, 1, 0);
+
+        // remove the spawn egg from the player's inventory
+        event.getItem().setAmount(event.getItem().getAmount() - 1);
+
+        spawnMythicMob(mythicMobName, location);
+        player.sendMessage(ChatColor.GREEN + "Spawned " + mythicMobName + "!");
+        activeBossFights.add(new ActiveBossFight(player.getName(), mythicMobName));
+
+        // 10-min timer to despawn the mob
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                despawnMythicMob(mythicMobName);
+                player.sendMessage(ChatColor.RED + mythicMobName + " has despawned!");
+                activeBossFights.removeIf(bossFight -> bossFight.getMythicMobName().equals(mythicMobName));
+            }
+        }.runTaskLater(plugin, 20 * 60 * 10);
+
+        // warning to player every 30 seconds
+        new BukkitRunnable() {
+            int remainingTime = 10 * 60; // 10 minutes in seconds
 
             @Override
             public void run() {
-                if (remainingMinutes <= 0) {
-                    despawnMythicMob(mobInfo.getMythicMobName());
-                } else {
-                    String playerName = spawnedMythicMobs.get(mobInfo.getMythicMobName());
-                    Player player = Bukkit.getPlayer(playerName);
-                    if (player != null) {
-                        player.sendMessage("Your mob will despawn in " + remainingMinutes + " minutes.");
-                    }
-                    remainingMinutes--;
+                if (remainingTime <= 0) {
+                    this.cancel();
+                    return;
                 }
+
+                player.sendMessage(ChatColor.YELLOW + mythicMobName + " will despawn in " + remainingTime / 60 + " minutes and " + remainingTime % 60 + " seconds.");
+                remainingTime -= 30;
             }
-        }, 0L, 20 * 60L); // Run every minute (20 ticks/second * 60 seconds)
+        }.runTaskTimer(plugin, 20 * 30, 20 * 30);
     }
 
-    public void despawnAllMythicMobs() {
-        for (String mythicMobName : spawnedMythicMobs.keySet()) {
-            despawnMythicMob(mythicMobName);
-        }
-    }
-
-    private void despawnMythicMob(String mythicMobName) {
-        MythicMobInfo mobInfo = getMythicMobInfoByName(mythicMobName);
-        if (mobInfo == null) {
+    public void handleMythicMobDeath(MythicMobDeathEvent e) {
+        // check if the mob that died was a boss
+        String mythicMobName = e.getMob().getType().getInternalName();
+        if (!spawnEggNames.contains(mythicMobName)) {
             return;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm m kill " + mythicMobName);
-        String playerName = spawnedMythicMobs.get(mythicMobName);
-        if (playerName != null) {
-            for (String command : mobInfo.getCommandsOnDeath()) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%PLAYER%", playerName));
+        // try to get the player who spawned the boss
+        String playerName = null;
+        for (ActiveBossFight bossFight : activeBossFights) {
+            if (bossFight.getMythicMobName().equals(mythicMobName)) {
+                playerName = bossFight.getPlayerName();
+                break;
             }
         }
 
-        spawnedMythicMobs.remove(mythicMobName);
-    }
-
-    private MythicMobInfo getMythicMobInfoByName(String mythicMobName) {
-        for (MythicMobInfo info : mythicMobInfoMap.values()) {
-            if (info.getMythicMobName().equals(mythicMobName)) {
-                return info;
-            }
+        // if we couldn't find the player, just return and broadcast the death
+        if (playerName == null) {
+            Bukkit.broadcastMessage(ChatColor.RED + mythicMobName + " has been slain by an unknown player!");
+            return;
         }
-        return null;
-    }
 
-    private Map<String, MythicMobInfo> loadMythicMobInfo() {
-        Config mainConfig = plugin.getMainConfig();
-        FlatFileSection configSection = mainConfig.getSection("mythicMobs");
+        // otherwise, broadcast the death and give the player a reward
+        Bukkit.broadcastMessage(ChatColor.RED + mythicMobName + " has been slain by " + playerName + "!");
+        Player player = Bukkit.getPlayer(playerName);
 
-        Map<String, MythicMobInfo> mobInfoMap = new HashMap<>();
-
-        if (configSection != null) {
-            for (String key : configSection.keySet()) {
-                FlatFileSection mobSection = configSection.getSection(key);
-
-                if (mobSection == null) {
-                    continue;
+        // give the player a reward
+        if (player != null) {
+            // find the right reward from bossRewards
+            for (BossReward bossReward : bossRewards) {
+                if (bossReward.getBossName().equals(mythicMobName)) {
+                    bossReward.executeRewardCommands(player.getName());
                 }
-
-                String mythicMobName = mobSection.getString("name");
-                String spawnEggName =ChatColor.translateAlternateColorCodes('&', mobSection.getString("spawnEggName"));
-                int minutesAlive = mobSection.getInt("minutesAlive");
-                List<String> allowedWorlds = mobSection.getStringList("allowedWorlds");
-                List<String> commandsOnDeath = mobSection.getStringList("commandsOnDeath");
-
-                MythicMobInfo mobInfo = new MythicMobInfo(mythicMobName, spawnEggName, minutesAlive, allowedWorlds, commandsOnDeath);
-                mobInfoMap.put(spawnEggName, mobInfo);
             }
         }
 
-        return mobInfoMap;
+        activeBossFights.removeIf(bossFight -> bossFight.getMythicMobName().equals(mythicMobName));
+    }
+
+
+    private void despawnMythicMob(String mythicMobName) {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm m kill " + mythicMobName);
+    }
+
+    private void spawnMythicMob(String mythicMobName, Location location) {
+        despawnMythicMob(mythicMobName);
+
+        // command format: /mm mobs spawn [mob_name]:<level> <amount> <world,x,y,z,yaw,pitch> Spawns mobs with the provided name.
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm mobs spawn " + mythicMobName + ":1 1 " + location.getWorld().getName() + "," + location.getX() + "," + location.getY() + "," + location.getZ() + "," + location.getYaw() + "," + location.getPitch());
+    }
+
+    public void despawnAllMythicMobs() {
+        for (String mythicMobName : spawnEggNames) {
+            despawnMythicMob(mythicMobName);
+        }
     }
 }

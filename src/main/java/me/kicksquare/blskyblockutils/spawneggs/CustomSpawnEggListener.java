@@ -1,5 +1,6 @@
 package me.kicksquare.blskyblockutils.spawneggs;
 
+import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import me.kicksquare.blskyblockutils.BLSkyblockUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,11 @@ public class CustomSpawnEggListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        spawnEggManager.handleSpawnEggInteraction(event);
+        spawnEggManager.handleSpawnEggPlaced(event);
+    }
+
+    @EventHandler
+    public void onMythicMobDeath(MythicMobDeathEvent event) {
+        spawnEggManager.handleMythicMobDeath(event);
     }
 }
