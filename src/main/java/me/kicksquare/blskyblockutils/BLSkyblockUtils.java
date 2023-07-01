@@ -10,6 +10,9 @@ import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.DeathListener;
 import me.kicksquare.blskyblockutils.mine.MineSoundListener;
 import me.kicksquare.blskyblockutils.mine.MineSpawnLocationUtil;
+import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
+import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
+import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,6 +32,8 @@ public final class BLSkyblockUtils extends JavaPlugin {
 
     public List<Location> validMineSpawnLocations = new ArrayList<>();
     public List<Location> validDungeonSpawnLocations = new ArrayList<>();
+
+    private SpawnEggManager spawnEggManager;
 
     public static BLSkyblockUtils getPlugin() {
         return plugin;
@@ -71,7 +76,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
 
 
-        // DUNGEON SPAWNING:
+        // DUNGEON BANDIT SPAWNING:
         MythicBukkit mythicBukkit = MythicBukkit.inst();
 
         int dungeonLimit = 17;
@@ -82,6 +87,15 @@ public final class BLSkyblockUtils extends JavaPlugin {
         // every 10 minutes, kill off old dungeon mobs
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> killOldDungeonMobs(mythicBukkit), 0, 60 * 10 * 20);
 
+        // Custom Spawn Eggs
+        spawnEggManager = new SpawnEggManager(this, mythicBukkit);
+        getCommand("getCustomSpawnEgg").setExecutor(new CustomSpawnEggCommand(this, spawnEggManager));
+        getServer().getPluginManager().registerEvents(new CustomSpawnEggListener(this, spawnEggManager), this);
+    }
+
+    @Override
+    public void onDisable() {
+        spawnEggManager.despawnAllMythicMobs();
     }
 
     public Config getMainConfig() {
