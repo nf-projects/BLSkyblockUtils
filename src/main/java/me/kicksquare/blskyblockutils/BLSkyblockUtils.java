@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.killOldDungeonMobs;
+import static me.kicksquare.blskyblockutils.leaderboards.LeaderboardUpdater.attemptToUpdateLeaderboards;
 import static me.kicksquare.blskyblockutils.mine.MineSpawner.attemptToSpawnMobInMine;
 import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.attemptToSpawnMobInDungeon;
 
@@ -91,6 +92,9 @@ public final class BLSkyblockUtils extends JavaPlugin {
         spawnEggManager = new SpawnEggManager(this, mythicBukkit);
         getCommand("getCustomSpawnEgg").setExecutor(new CustomSpawnEggCommand(this, spawnEggManager));
         getServer().getPluginManager().registerEvents(new CustomSpawnEggListener(this, spawnEggManager), this);
+
+        // periodically attempt to update leaderboards
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0 * 60, 20 * 10); // every 10 seconds starting 60 seconds after server start
     }
 
     @Override

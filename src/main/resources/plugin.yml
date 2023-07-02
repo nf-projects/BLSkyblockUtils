@@ -6,6 +6,7 @@ description: Utils for the skyblock mine
 load: POSTWORLD
 softdepend:
   - Multiverse-Core
+  - PlaceholderAPI
 commands:
   getCustomSpawnEgg:
     description: Get a custom spawn egg

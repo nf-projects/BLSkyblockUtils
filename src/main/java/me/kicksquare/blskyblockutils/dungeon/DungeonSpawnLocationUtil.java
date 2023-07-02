@@ -68,7 +68,6 @@ public class DungeonSpawnLocationUtil {
             attempts++;
         }
 
-        System.out.println("DUNGEON: Generated " + spawnLocations.size() + " valid spawn locations in " + attempts + " attempts");
         plugin.validDungeonSpawnLocations = spawnLocations;
     }
 }

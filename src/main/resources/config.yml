@@ -2,3 +2,31 @@ respawn-mine-mobs-delay-seconds: 0.5
 
 # max number of mobs that can be in the mine at once
 respawn-mine-mobs-limit: 50
+
+# auto updated
+leaderboards-last-sent-date-time: 2023-01-01T00:00:00.000Z
+
+leaderboards-webhook-url: https://discord.com/api/webhooks/1125196746713202779/8_otIB2p1HZ0I9ecQRcSRt3JF5RQrmoXv2SNverFrXUATD7cFsK9T8sC6103YqkYm0-q
+
+leaderboards-level-lines:
+  - "**#1** - __%superior_island_top_level_1%__ - *Level %superior_island_top_level_value_1%*"
+  - "**#2** - __%superior_island_top_level_2%__ - *Level %superior_island_top_level_value_2%*"
+  - "**#3** - __%superior_island_top_level_3%__ - *Level %superior_island_top_level_value_3%*"
+  - "**#4** - __%superior_island_top_level_4%__ - *Level %superior_island_top_level_value_4%*"
+  - "**#5** - __%superior_island_top_level_5%__ - *Level %superior_island_top_level_value_5%*"
+
+leaderboards-baltop-lines:
+  - "**#1** - __%essentials_baltop_player_1%__ - *$%essentials_baltop_balance_formatted_1%*"
+  - "**#2** - __%essentials_baltop_player_2%__ - *$%essentials_baltop_balance_formatted_2%*"
+  - "**#3** - __%essentials_baltop_player_3%__ - *$%essentials_baltop_balance_formatted_3%*"
+  - "**#4** - __%essentials_baltop_player_4%__ - *$%essentials_baltop_balance_formatted_4%*"
+  - "**#5** - __%essentials_baltop_player_5%__ - *$%essentials_baltop_balance_formatted_5%*"
+
+leaderboards-gems-lines:
+  - "**#1** - __%playerpoints_leaderboard_1%__ - *%playerpoints_leaderboard_1_amount%*"
+  - "**#2** - __%playerpoints_leaderboard_2%__ - *%playerpoints_leaderboard_2_amount%*"
+  - "**#3** - __%playerpoints_leaderboard_3%__ - *%playerpoints_leaderboard_3_amount%*"
+  - "**#4** - __%playerpoints_leaderboard_4%__ - *%playerpoints_leaderboard_4_amount%*"
+  - "**#5** - __%playerpoints_leaderboard_5%__ - *%playerpoints_leaderboard_5_amount%*"
+
+

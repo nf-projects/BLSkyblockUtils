@@ -67,7 +67,6 @@ public class MineSpawnLocationUtil {
             attempts++;
         }
 
-        System.out.println("Generated " + spawnLocations.size() + " valid spawn locations in " + attempts + " attempts");
         plugin.validMineSpawnLocations = spawnLocations;
     }
 }
