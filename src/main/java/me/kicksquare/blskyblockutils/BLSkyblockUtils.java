@@ -5,21 +5,22 @@ import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.mobs.ActiveMob;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.DeathListener;
 import me.kicksquare.blskyblockutils.mine.MineSoundListener;
 import me.kicksquare.blskyblockutils.mine.MineSpawnLocationUtil;
+import me.kicksquare.blskyblockutils.onboarding.PapiExtension;
+import me.kicksquare.blskyblockutils.onboarding.listener.FullDiamondEvent;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
+import me.kicksquare.blskyblockutils.util.database.PlanetScaleDB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.killOldDungeonMobs;
@@ -29,7 +30,9 @@ import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.attemptToSpaw
 
 public final class BLSkyblockUtils extends JavaPlugin {
     private static BLSkyblockUtils plugin;
+
     private Config mainConfig;
+    private PlanetScaleDB database;
 
     public List<Location> validMineSpawnLocations = new ArrayList<>();
     public List<Location> validDungeonSpawnLocations = new ArrayList<>();
@@ -50,6 +53,14 @@ public final class BLSkyblockUtils extends JavaPlugin {
                 .setDataType(DataType.SORTED)
                 .setReloadSettings(ReloadSettings.MANUALLY)
                 .createConfig();
+
+        database = new PlanetScaleDB(this,
+                mainConfig.getString("database-host"),
+                mainConfig.getString("database-name"),
+                mainConfig.getString("database-username"),
+                mainConfig.getString("database-password"));
+
+        // -----------------------
 
         // generate valid mine spawn locations
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
@@ -76,6 +87,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
         // halve XP on death and remove all ores from inventory in the mine
         Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
 
+        // -----------------------
 
         // DUNGEON BANDIT SPAWNING:
         MythicBukkit mythicBukkit = MythicBukkit.inst();
@@ -93,8 +105,20 @@ public final class BLSkyblockUtils extends JavaPlugin {
         getCommand("getCustomSpawnEgg").setExecutor(new CustomSpawnEggCommand(this, spawnEggManager));
         getServer().getPluginManager().registerEvents(new CustomSpawnEggListener(this, spawnEggManager), this);
 
+        // -----------------------
+
         // periodically attempt to update leaderboards
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0 * 60, 20 * 10); // every 10 seconds starting 60 seconds after server start
+
+        // -----------------------
+        Bukkit.getPluginManager().registerEvents(new FullDiamondEvent(), this);
+
+        // papi extension for onboarding
+        // enable papi
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PapiExtension(this).register();
+        }
+
     }
 
     @Override
@@ -104,5 +128,9 @@ public final class BLSkyblockUtils extends JavaPlugin {
 
     public Config getMainConfig() {
         return mainConfig;
+    }
+
+    public PlanetScaleDB getDatabase() {
+        return database;
     }
 }

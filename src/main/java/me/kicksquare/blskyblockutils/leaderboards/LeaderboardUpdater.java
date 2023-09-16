@@ -13,7 +13,6 @@ import java.util.Date;
 
 public class LeaderboardUpdater {
     public static void attemptToUpdateLeaderboards(BLSkyblockUtils plugin){
-        System.out.println(1);
         Config config = plugin.getMainConfig();
 
         // get the last time the leaderboards were updated
@@ -24,7 +23,6 @@ public class LeaderboardUpdater {
         try {
             lastSentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(lastSentDateTime);
         } catch (ParseException e) {
-            System.out.println(2);
             return;
         }
 
