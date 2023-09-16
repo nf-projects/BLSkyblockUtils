@@ -25,16 +25,39 @@ public class SpawnEggManager {
     private final BLSkyblockUtils plugin;
     private final MythicBukkit mythicBukkit;
 
-    private final List<String> spawnEggNames = Arrays.asList("ergeox");
-    private final List<BossReward> bossRewards = Arrays.asList(
-            new BossReward("ergeox", new String[] {
-                    "mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
-            }));
+//    private final List<String> spawnEggNames = Arrays.asList("ergeox");
+//    private final List<BossReward> bossRewards = Arrays.asList(
+//            new BossReward("ergeox", new String[] {
+//                    "mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
+//            }));
+
+    private List<String> spawnEggNames = new ArrayList<>();
+    private final List<BossReward> bossRewards = new ArrayList<>();
+
+
     private List<ActiveBossFight> activeBossFights = new ArrayList<>();
 
     public SpawnEggManager(BLSkyblockUtils plugin, MythicBukkit mythicBukkit) {
         this.plugin = plugin;
         this.mythicBukkit = mythicBukkit;
+
+        List<String> bossesConfig = plugin.getMainConfig().getStringList("bosses");
+
+        // read the boss config. syntax example:
+        // # Syntax: `[boss name]|[command to run on kill. ]
+        //# %player% will be replaced with the player's name; %boss% will be replaced with the boss's name; %int% will be replaced with a random int between 1 and 4 inclusive
+        //bosses:
+        //- "ergeox|mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
+        //- "herobrine|broadcast Herobrine killed by %player%!!"
+        for (String boss : bossesConfig) {
+            String bossName = boss.split("\\|")[0];
+            String[] rewardCommands = boss.split("\\|")[1].split(";");
+
+            spawnEggNames.add(bossName);
+            bossRewards.add(new BossReward(bossName, rewardCommands));
+
+            plugin.getLogger().info("[BOSS SYSTEM] Loaded boss " + bossName);
+        }
     }
 
     // returns true if it's a valid spawn egg name

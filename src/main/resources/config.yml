@@ -3,6 +3,12 @@ respawn-mine-mobs-delay-seconds: 0.5
 # max number of mobs that can be in the mine at once
 respawn-mine-mobs-limit: 50
 
+# Syntax: `[boss name]|[command to run on kill]`
+# %player% will be replaced with the player's name; %boss% will be replaced with the boss's name; %int% will be replaced with a random int between 1 and 4 inclusive
+# requires reboot
+bosses:
+  - "ergeox|mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
+
 # auto updated
 leaderboards-last-sent-date-time: 2023-01-01T00:00:00.000Z
 

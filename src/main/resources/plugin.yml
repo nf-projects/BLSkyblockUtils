@@ -13,3 +13,7 @@ commands:
     usage: /<command> <entity>
     permission: blskyblockutils.getcustomspawnegg
     aliases: [getegg, getspawnegg]
+  bladmin:
+    description: Admin commands for BLSkyblockUtils
+    usage: /<command> <subcommand>
+    permission: blskyblockutils.admin

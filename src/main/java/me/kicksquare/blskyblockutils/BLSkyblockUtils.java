@@ -13,6 +13,7 @@ import me.kicksquare.blskyblockutils.mine.MineSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
+import me.kicksquare.blskyblockutils.util.AdminUtilCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,6 +51,8 @@ public final class BLSkyblockUtils extends JavaPlugin {
                 .setDataType(DataType.SORTED)
                 .setReloadSettings(ReloadSettings.MANUALLY)
                 .createConfig();
+
+        getCommand("bladmin").setExecutor(new AdminUtilCommands(this));
 
         // generate valid mine spawn locations
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
