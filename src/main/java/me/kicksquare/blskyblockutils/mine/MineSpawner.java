@@ -14,7 +14,7 @@ public class MineSpawner {
             return;
         }
 
-        // if there are already over 150 zombies, skeletons, and creepers combined in the world "mine", don't spawn more
+        // if there are already over 50 zombies, skeletons, and creepers combined in the world "mine", don't spawn more
         if (Bukkit.getWorld("mine").getEntitiesByClass(Zombie.class).size() +
                 Bukkit.getWorld("mine").getEntitiesByClass(Skeleton.class).size() +
                 Bukkit.getWorld("mine").getEntitiesByClass(Creeper.class).size() > limit) {
@@ -25,8 +25,15 @@ public class MineSpawner {
         int randomIndex = (int) (Math.random() * validSpawnLocations.size());
         Location randomSpawnLocation = validSpawnLocations.get(randomIndex);
 
+        // to increase the concentration of mobs at the bottom, there is a 35% chance of re-rolling a new spanw location
+        // if the chosen location has a y > 60
+        if (randomSpawnLocation.getY() > 60 && Math.random() < 0.35) {
+            attemptToSpawnMobInMine(validSpawnLocations, limit);
+            return;
+        }
+
         // randomly select either zombie, skeleton, or creeper to spawn
-        int randomMob = (int) (Math.random() * 3);
+        int randomMob = (int) (Math.random() * 4);
         switch (randomMob) {
             case 0:
                 Bukkit.getWorld("mine").spawn(randomSpawnLocation, Zombie.class);
@@ -37,6 +44,14 @@ public class MineSpawner {
             case 2:
                 Bukkit.getWorld("mine").spawn(randomSpawnLocation, Creeper.class);
                 break;
+            case 3:
+                // if y is lower than 60, spawn a spider. otherwise, just spawn a zombie
+                // (cant spawn spiders at the top because they would be able to clim up to /mine spawn)
+                if (randomSpawnLocation.getY() < 60) {
+                    Bukkit.getWorld("mine").spawn(randomSpawnLocation, org.bukkit.entity.Spider.class);
+                } else {
+                    Bukkit.getWorld("mine").spawn(randomSpawnLocation, Zombie.class);
+                }
         }
     }
 }

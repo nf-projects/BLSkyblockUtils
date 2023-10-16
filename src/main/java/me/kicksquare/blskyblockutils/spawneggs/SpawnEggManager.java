@@ -25,12 +25,6 @@ public class SpawnEggManager {
     private final BLSkyblockUtils plugin;
     private final MythicBukkit mythicBukkit;
 
-//    private final List<String> spawnEggNames = Arrays.asList("ergeox");
-//    private final List<BossReward> bossRewards = Arrays.asList(
-//            new BossReward("ergeox", new String[] {
-//                    "mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
-//            }));
-
     private List<String> spawnEggNames = new ArrayList<>();
     private final List<BossReward> bossRewards = new ArrayList<>();
 

@@ -5,9 +5,9 @@ import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.mobs.ActiveMob;
+import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
-import me.kicksquare.blskyblockutils.mine.DeathListener;
+import me.kicksquare.blskyblockutils.mine.MineDeathListener;
 import me.kicksquare.blskyblockutils.mine.MineSoundListener;
 import me.kicksquare.blskyblockutils.mine.MineSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
@@ -20,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static me.kicksquare.blskyblockutils.dungeon.DungeonSpawner.killOldDungeonMobs;
@@ -77,24 +76,29 @@ public final class BLSkyblockUtils extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MineSoundListener(), this);
 
         // halve XP on death and remove all ores from inventory in the mine
-        Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MineDeathListener(), this);
 
 
         // DUNGEON BANDIT SPAWNING:
         MythicBukkit mythicBukkit = MythicBukkit.inst();
 
-        int dungeonLimit = 17;
+        int dungeonLimit = 25;
 
         // periodically spawn mobs in the dungeon
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToSpawnMobInDungeon(validDungeonSpawnLocations, dungeonLimit, mythicBukkit), 0, interval); // every 0.5 seconds, but 60 seconds after server start
 
-        // every 10 minutes, kill off old dungeon mobs
+        // every 10 minutes, kill off old dungeon mobs (in case they spawned in bugged areas)
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> killOldDungeonMobs(mythicBukkit), 0, 60 * 10 * 20);
+
+        // halve XP on death and remove all ores from inventory in the mine
+        Bukkit.getPluginManager().registerEvents(new DungeonDeathListener(), this);
 
         // Custom Spawn Eggs
         spawnEggManager = new SpawnEggManager(this, mythicBukkit);
         getCommand("getCustomSpawnEgg").setExecutor(new CustomSpawnEggCommand(this, spawnEggManager));
         getServer().getPluginManager().registerEvents(new CustomSpawnEggListener(this, spawnEggManager), this);
+
+        // ----- leader boards
 
         // periodically attempt to update leaderboards
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0 * 60, 20 * 10); // every 10 seconds starting 60 seconds after server start
