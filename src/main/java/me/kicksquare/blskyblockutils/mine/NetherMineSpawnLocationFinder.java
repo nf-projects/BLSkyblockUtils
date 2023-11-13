@@ -10,18 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MineSpawnLocationUtil {
+public class NetherMineSpawnLocationFinder {
     private static final BLSkyblockUtils plugin = BLSkyblockUtils.getPlugin();
 
     public static void generateValidSpawnLocations() {
-        int minX = -118;
-        int minY = 1;
-        int minZ = -95;
-        int maxX = -1;
-        int maxY = 105;
-        int maxZ = 38;
+        int minX = -138;
+        int minY = -30;
+        int minZ = -115;
+        int maxX = 5;
+        int maxY = 67;
+        int maxZ = 28;
 
-        World world = Bukkit.getWorld("mine");
+        World world = Bukkit.getWorld("nethermine");
 
         List<Location> spawnLocations = new ArrayList<>();
         int maxAttempts = 50000;
@@ -67,6 +67,6 @@ public class MineSpawnLocationUtil {
             attempts++;
         }
 
-        plugin.validMineSpawnLocations = spawnLocations;
+        plugin.validNetherMineSpawnLocations = spawnLocations;
     }
 }

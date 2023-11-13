@@ -13,7 +13,7 @@ public class MineSoundListener implements Listener {
     @EventHandler
     public void onMine(BlockBreakEvent event) {
         // we only want this to happen in the mine
-        if (!event.getBlock().getWorld().getName().equals("mine")) {
+        if (!(event.getBlock().getWorld().getName().equals("mine") || event.getBlock().getWorld().getName().equals("nethermine"))) {
             return;
         }
 

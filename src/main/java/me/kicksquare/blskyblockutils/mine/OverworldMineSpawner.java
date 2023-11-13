@@ -8,9 +8,9 @@ import org.bukkit.entity.Zombie;
 
 import java.util.List;
 
-public class MineSpawner {
-    public static void attemptToSpawnMobInMine(List<Location> validSpawnLocations, int limit) {
-        if (validSpawnLocations.size() == 0) {
+public class OverworldMineSpawner {
+    public static void attemptToSpawnMobInOverworldMine(List<Location> validOverworldMineSpawnLocations, int limit) {
+        if (validOverworldMineSpawnLocations.size() == 0) {
             return;
         }
 
@@ -22,13 +22,13 @@ public class MineSpawner {
         }
 
         // get a random spawn location from spawnlist
-        int randomIndex = (int) (Math.random() * validSpawnLocations.size());
-        Location randomSpawnLocation = validSpawnLocations.get(randomIndex);
+        int randomIndex = (int) (Math.random() * validOverworldMineSpawnLocations.size());
+        Location randomSpawnLocation = validOverworldMineSpawnLocations.get(randomIndex);
 
         // to increase the concentration of mobs at the bottom, there is a 35% chance of re-rolling a new spanw location
         // if the chosen location has a y > 60
         if (randomSpawnLocation.getY() > 60 && Math.random() < 0.35) {
-            attemptToSpawnMobInMine(validSpawnLocations, limit);
+            attemptToSpawnMobInOverworldMine(validOverworldMineSpawnLocations, limit);
             return;
         }
 

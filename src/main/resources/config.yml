@@ -1,7 +1,16 @@
 respawn-mine-mobs-delay-seconds: 0.5
 
-# max number of mobs that can be in the mine at once
+# max number of mobs that can be in the **OVERWORLD** mine at once
 respawn-mine-mobs-limit: 50
+
+nether-mine-mobs:
+  - "Dark_Imp|4"
+  - "Hellhound|7"
+  - "Lost_Soul|12"
+  - "Nether_Mushroom|10"
+  - "Fire_Imp|12"
+  - "Lava_Mite|15"
+  - "Lava_Gyser|3"
 
 # Syntax: `[boss name]|[command to run on kill]`
 # %player% will be replaced with the player's name; %boss% will be replaced with the boss's name; %int% will be replaced with a random int between 1 and 4 inclusive

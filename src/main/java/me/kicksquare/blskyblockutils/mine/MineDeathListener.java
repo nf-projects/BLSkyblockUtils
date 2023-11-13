@@ -10,7 +10,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 public class MineDeathListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        if (!event.getEntity().getWorld().getName().equals("mine")) return;
+        if (!(event.getEntity().getWorld().getName().equals("mine") || event.getEntity().getWorld().getName().equals("nethermine"))) return;
 
         Player p = event.getEntity();
 
@@ -19,10 +19,18 @@ public class MineDeathListener implements Listener {
         ExperienceUtil.changeExp(p, -(xp / 2));
 
         // remove any ores from inventory
-        String[] oreNames = {"IRON_ORE", "GOLD_ORE", "DIAMOND_ORE", "EMERALD_ORE",
+        String[] oreNames = {
+                "IRON_ORE", "GOLD_ORE", "DIAMOND_ORE", "EMERALD_ORE",
                 "COAL_ORE", "REDSTONE_ORE", "LAPIS_ORE", "QUARTZ_ORE",
                 "IRON_INGOT", "GOLD_INGOT", "DIAMOND", "EMERALD",
-                "COAL", "REDSTONE", "LAPIS_LAZULI", "QUARTZ", "RAW_IRON", "RAW_GOLD"};
+                "COAL", "REDSTONE", "LAPIS_LAZULI", "QUARTZ", "RAW_IRON", "RAW_GOLD",
+                // nether mine
+                "NETHERRACK", "OBSIDIAN", "NETHER_QUARTZ", "GOLD_NUGGET",
+                "GLOWSTONE_DUST", "NETHER_BRICK_SLAB", "CRACKED_NETHER_BRICKS",
+                "NETHER_BRICK_FENCE", "NETHER_BRICK_STAIRS", "RED_NETHER_BRICKS",
+                "WARPED_NYLIUM"
+        };
+
 
 
         // loops through the inventory and removes any ores
@@ -43,6 +51,6 @@ public class MineDeathListener implements Listener {
         }
 
         p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lYou died in the mine!"));
-        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lYou lost 50% of your XP and all ores in your inventory!"));
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lYou lost 50% of your XP and all mine drops in your inventory!"));
     }
 }
