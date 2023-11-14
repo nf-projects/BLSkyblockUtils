@@ -48,6 +48,6 @@ public class PapiExtension extends PlaceholderExpansion {
             return null;
         }
 
-        return PlayerLevelCalculator.calculatePlayerLevel((Player) player);
+        return String.valueOf(PlayerLevelCalculator.calculatePlayerLevel((Player) player).level);
     }
 }
