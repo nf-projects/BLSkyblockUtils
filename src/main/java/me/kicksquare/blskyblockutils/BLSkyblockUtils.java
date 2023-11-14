@@ -8,6 +8,7 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.*;
+import me.kicksquare.blskyblockutils.playerlevel.PapiExtension;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
@@ -115,6 +116,11 @@ public final class BLSkyblockUtils extends JavaPlugin {
 
         // periodically attempt to update leaderboards
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0 * 60, 20 * 10); // every 10 seconds starting 60 seconds after server start
+
+        // player level
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PapiExtension(this).register();
+        }
     }
 
     @Override
