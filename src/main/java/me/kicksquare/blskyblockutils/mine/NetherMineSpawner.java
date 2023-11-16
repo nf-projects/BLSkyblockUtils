@@ -31,11 +31,7 @@ public class NetherMineSpawner {
             Integer spawnLimit = Integer.valueOf(mob.split("\\|")[1]); // ¯\_(ツ)_/¯
 
             netherMineMobs.put(mobName, spawnLimit);
-
-            plugin.getLogger().info("[Nether Mine Spawner] Loaded mob " + mobName + " with spawn limit " + spawnLimit);
         }
-
-        Bukkit.getLogger().info("[Nether Mine Spawner] Loaded " + netherMineMobs.size() + " mobs.");
 
         // get a random spawn location from spawnlist
         int randomIndex = (int) (Math.random() * validNetherMineSpawnLocations.size());

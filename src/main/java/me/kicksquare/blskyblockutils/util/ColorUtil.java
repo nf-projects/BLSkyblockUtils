@@ -11,6 +11,10 @@ public class ColorUtil {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    /*
+        * This method is used to colorize hex codes in a string.
+        * Example input String: "Hello #FF0000World"
+     */
     public static String colorizeHexCodes(String message) {
         Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
         Matcher matcher = hexPattern.matcher(message);

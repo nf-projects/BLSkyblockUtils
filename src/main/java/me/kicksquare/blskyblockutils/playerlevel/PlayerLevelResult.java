@@ -16,6 +16,4 @@ public class PlayerLevelResult {
         this.levelsFromMobsKilled = levelsFromMobsKilled;
         this.levelsFromQuestsCompleted = levelsFromQuestsCompleted;
     }
-
-
 }

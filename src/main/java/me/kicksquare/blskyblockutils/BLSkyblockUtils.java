@@ -9,6 +9,7 @@ import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.*;
 import me.kicksquare.blskyblockutils.playerlevel.PapiExtension;
+import me.kicksquare.blskyblockutils.playerlevel.PlayerLevelCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
@@ -93,6 +94,9 @@ public final class BLSkyblockUtils extends JavaPlugin {
         // netherite block nether mine drops custom ExecutableItems drop
         Bukkit.getPluginManager().registerEvents(new MineNetheriteListener(), this);
 
+        // gold nugget drop listener
+        Bukkit.getPluginManager().registerEvents(new MineGoldnuggetListener(), this);
+
 
         // DUNGEON BANDIT SPAWNING:
 
@@ -121,6 +125,8 @@ public final class BLSkyblockUtils extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PapiExtension(this).register();
         }
+
+        getCommand("playerlevel").setExecutor(new PlayerLevelCommand(this));
     }
 
     @Override

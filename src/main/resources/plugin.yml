@@ -17,3 +17,6 @@ commands:
     description: Admin commands for BLSkyblockUtils
     usage: /<command> <subcommand>
     permission: blskyblockutils.admin
+  playerlevel:
+    aliases: [pl, plevel]
+    description: Check your player level

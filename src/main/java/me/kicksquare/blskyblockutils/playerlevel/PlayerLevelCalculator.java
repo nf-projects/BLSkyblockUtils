@@ -9,7 +9,7 @@ public class PlayerLevelCalculator {
     public static PlayerLevelResult calculatePlayerLevel(Player p) {
         int level = 1;
 
-        int combinedSkillLevel = papiInt(p, "%aureliumskills_power");
+        int combinedSkillLevel = papiInt(p, "%aureliumskills_power%");
         // need to replace ',' with '' because PlaceholderAPI returns a string with commas
         int islandLevel = Integer.parseInt(PlaceholderAPI.setPlaceholders(p, "%superior_island_level%").replaceAll(",", ""));
         int playtimeHours = papiInt(p, "%statistic_hours_played%");
