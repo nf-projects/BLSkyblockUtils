@@ -38,7 +38,7 @@ public class MineGoldnuggetListener implements Listener {
             return;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoitemsac drop ACCESSORY NETHERGOLD nethermine " + x + " " + y + " " + z + "2-6");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoitems drop ACCESSORY NETHERGOLD nethermine " + x + " " + y + " " + z + "1 2-6");
 
         System.out.println("Spawned nethergold at " + x + " " + y + " " + z + " original block was broken at " + e.getBlock().getX() + " " + e.getBlock().getY() + " " + e.getBlock().getZ());
     }
