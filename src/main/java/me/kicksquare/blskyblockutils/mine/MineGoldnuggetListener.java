@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 
 public class MineGoldnuggetListener implements Listener {
     @EventHandler
@@ -38,8 +39,6 @@ public class MineGoldnuggetListener implements Listener {
             return;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoitems drop ACCESSORY NETHERGOLD nethermine " + x + " " + y + " " + z + "1 2-6 0");
-
-        System.out.println("Spawned nethergold at " + x + " " + y + " " + z + " original block was broken at " + e.getBlock().getX() + " " + e.getBlock().getY() + " " + e.getBlock().getZ());
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoitems drop ACCESSORY NETHERGOLD nethermine " + x + " " + y + " " + z + " 1 2-6 0");
     }
 }

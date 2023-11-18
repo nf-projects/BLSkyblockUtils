@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 
 public class MineNetheriteListener implements Listener {
     @EventHandler
@@ -39,7 +40,25 @@ public class MineNetheriteListener implements Listener {
         }
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ei drop blazeshard 1 nethermine " + x + " " + y + " " + z);
+    }
 
-        System.out.println("Spawned blazeshard at " + x + " " + y + " " + z + " original block was broken at " + e.getBlock().getX() + " " + e.getBlock().getY() + " " + e.getBlock().getZ());
+
+    // failsafe - under no circumstances should a netherite block drop itself
+    @EventHandler
+    public void onBlockDrop(BlockBreakEvent e) {
+        if(!e.getBlock().getWorld().getName().equals("nethermine")) return;
+
+        if(e.getBlock().getBlockData().getMaterial() == Material.NETHERITE_BLOCK) {
+            e.setDropItems(false);
+        }
+    }
+
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent e) {
+        if(!e.getEntity().getWorld().getName().equals("nethermine")) return;
+
+        if(e.getEntity().getItemStack().getType() == Material.NETHERITE_BLOCK) {
+            e.setCancelled(true);
+        }
     }
 }

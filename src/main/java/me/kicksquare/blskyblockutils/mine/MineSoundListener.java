@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
+import static me.kicksquare.blskyblockutils.util.ColorUtil.colorize;
+
 public class MineSoundListener implements Listener {
     @EventHandler
     public void onMine(BlockBreakEvent event) {
@@ -71,14 +73,14 @@ public class MineSoundListener implements Listener {
             // random number between 0 and 100 inclusive
             int randomInt = rand.nextInt(101);
             if (randomInt == 6) {
-                event.getPlayer().sendMessage("You found a very rare ore! 10x drops!");
+                event.getPlayer().sendMessage(colorize("&8&oYou found a very rare ore! &a&l10x drops!"));
 
                 int amount = event.getBlock().getDrops().iterator().next().getAmount() * 9;
                 event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(itemDrop, amount));
 
                 event.getPlayer().playSound(event.getBlock().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             } else if (randomInt <= 5) {
-                event.getPlayer().sendMessage("You found a rare ore! 3x drops!");
+                event.getPlayer().sendMessage(colorize("&8&oYou found a rare ore! &a&l3x drops!"));
 
                 int amount = event.getBlock().getDrops().iterator().next().getAmount() * 2;
                 event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(itemDrop, amount));

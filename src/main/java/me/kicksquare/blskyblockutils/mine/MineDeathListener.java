@@ -18,7 +18,7 @@ public class MineDeathListener implements Listener {
         int xp = ExperienceUtil.getExp(p);
         ExperienceUtil.changeExp(p, -(xp / 2));
 
-        // remove any ores from inventory
+        // remove any items from the player's inventory where the item *material* is one of these
         String[] oreNames = {
                 "IRON_ORE", "GOLD_ORE", "DIAMOND_ORE", "EMERALD_ORE",
                 "COAL_ORE", "REDSTONE_ORE", "LAPIS_ORE", "QUARTZ_ORE",
@@ -31,7 +31,9 @@ public class MineDeathListener implements Listener {
                 "WARPED_NYLIUM"
         };
 
-
+        String[] itemNames = {
+                "Netherite Shard", "Compressed Netherite Shard"
+        };
 
         // loops through the inventory and removes any ores
         for (int i = 0; i < p.getInventory().getSize(); i++) {
@@ -44,6 +46,13 @@ public class MineDeathListener implements Listener {
                     // custom hats are iron ore with custom model data - DONT DELETE!
                     if (p.getInventory().getItem(i).getItemMeta().getDisplayName().contains("Hat")) continue;
 
+                    p.getInventory().setItem(i, null);
+                    break;
+                }
+            }
+
+            for (int j = 0; j < itemNames.length; j++) {
+                if (p.getInventory().getItem(i).getItemMeta().getDisplayName().contains(itemNames[j])) {
                     p.getInventory().setItem(i, null);
                     break;
                 }
