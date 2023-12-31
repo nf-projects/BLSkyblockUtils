@@ -5,13 +5,11 @@ import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import me.kicksquare.blskyblockutils.capitols.Capitol;
 import me.kicksquare.blskyblockutils.capitols.War;
 import me.kicksquare.blskyblockutils.capitols.WarManager;
 import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.*;
-import me.kicksquare.blskyblockutils.playerlevel.PapiExtension;
 import me.kicksquare.blskyblockutils.playerlevel.PlayerLevelCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
@@ -137,13 +135,12 @@ public final class BLSkyblockUtils extends JavaPlugin {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0 * 60, 20 * 10); // every 10 seconds starting 60 seconds after server start
         }
 
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PapiExtension(this).register();
+        }
 
         // ----- Player level
         if (mainConfig.getBoolean("playerlevel-module")) {
-            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                new PapiExtension(this).register();
-            }
-
             getCommand("playerlevel").setExecutor(new PlayerLevelCommand(this));
         }
 
@@ -153,7 +150,6 @@ public final class BLSkyblockUtils extends JavaPlugin {
                 getLogger().warning("WorldGuard or Lands not found, Capitols module will NOT work.");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
-
 
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
                 currentWar = WarManager.tickWar(currentWar, this);

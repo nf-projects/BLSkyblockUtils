@@ -4,6 +4,7 @@ import me.angeschossen.lands.api.LandsIntegration;
 import me.angeschossen.lands.api.nation.Nation;
 import me.kicksquare.blskyblockutils.capitols.Capitol;
 import me.kicksquare.blskyblockutils.capitols.War;
+import me.kicksquare.blskyblockutils.util.TimeFormatterUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,11 +55,12 @@ public class AdminCommands implements CommandExecutor {
                 }
 
                 player.sendMessage(colorize("&Active war: " + war.nationBlue.getName() + " vs " + war.nationRed.getName()));
-                player.sendMessage(colorize("&aBlue Points: " + war.nationBlueCurrentPoints));
-                player.sendMessage(colorize("&aRed Points: " + war.nationRedCurrentPoints));
-                player.sendMessage(colorize("&aFinal Beacon status: " + war.beaconStatus.toString()));
-                player.sendMessage(colorize("&aDuration: " + (war.maxDurationHours - (System.currentTimeMillis() - war.startTime) / 1000 / 60 / 60) + " hours"));
-                player.sendMessage(colorize("&aTime remaining: " + (war.maxDurationHours - (System.currentTimeMillis() - war.startTime) / 1000 / 60 / 60) + " hours"));
+                player.sendMessage(colorize("&aBlue Points: " + war.getNationBlueCurrentPoints()));
+                player.sendMessage(colorize("&aRed Points: " + war.getNationRedCurrentPoints()));
+                player.sendMessage(colorize("&aBeacon status: " + war.beaconStatus.toString()));
+                player.sendMessage(colorize("&aTime Elapsed: " + TimeFormatterUtil.formatSeconds(war.getSecondsElapsed())));
+                player.sendMessage(colorize("&aTime Remaining: " + TimeFormatterUtil.formatSeconds(war.getSecondsRemaining())));
+
                 return true;
             }
 
@@ -71,11 +73,11 @@ public class AdminCommands implements CommandExecutor {
                 War war = plugin.endCurrentWar();
 
                 player.sendMessage(colorize("&aEnded war: " + war.nationBlue.getName() + " vs " + war.nationRed.getName()));
-                player.sendMessage(colorize("&aBlue Points: " + war.nationBlueCurrentPoints));
-                player.sendMessage(colorize("&aRed Points: " + war.nationRedCurrentPoints));
-                player.sendMessage(colorize("&aFinal Beacon status: " + war.beaconStatus.toString()));
-                player.sendMessage(colorize("&aDuration: " + (war.maxDurationHours - (System.currentTimeMillis() - war.startTime) / 1000 / 60 / 60) + " hours"));
-                player.sendMessage(colorize("&aTime remaining: " + (war.maxDurationHours - (System.currentTimeMillis() - war.startTime) / 1000 / 60 / 60) + " hours"));
+                player.sendMessage(colorize("&aBlue Points: " + war.getNationBlueCurrentPoints()));
+                player.sendMessage(colorize("&aRed Points: " + war.getNationRedCurrentPoints()));
+                player.sendMessage(colorize("&aBeacon status: " + war.beaconStatus.toString()));
+                player.sendMessage(colorize("&aTime Elapsed: " + TimeFormatterUtil.formatSeconds(war.getSecondsElapsed())));
+                player.sendMessage(colorize("&aTime Remaining: " + TimeFormatterUtil.formatSeconds(war.getSecondsRemaining())));
                 return true;
             }
         }

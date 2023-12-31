@@ -1,12 +1,16 @@
-package me.kicksquare.blskyblockutils.playerlevel;
+package me.kicksquare.blskyblockutils;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.kicksquare.blskyblockutils.BLSkyblockUtils;
+import me.kicksquare.blskyblockutils.capitols.War;
+import me.kicksquare.blskyblockutils.playerlevel.PlayerLevelCalculator;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+
+import static me.kicksquare.blskyblockutils.capitols.PlaceholderCalculator.parseWarPlaceholder;
 
 public class PapiExtension extends PlaceholderExpansion {
 
@@ -44,10 +48,16 @@ public class PapiExtension extends PlaceholderExpansion {
             return null;
         }
 
-        if(!Objects.equals(params, "playerlevel")) {
-            return null;
+        // 2 placeholder types:
+        // %blskyblockutils_playerlevel%
+        // %blskyblockutils_war_[status|nation_blue|nation_red|beacon_status|blue_points|red_points|time_elapsed|time_remaining|point_goal]%
+
+        if (params.equalsIgnoreCase("playerlevel") && plugin.getMainConfig().getBoolean("playerlevel-module")) {
+            return String.valueOf(PlayerLevelCalculator.calculatePlayerLevel((Player) player).level);
+        } else if (params.startsWith("war_") && plugin.getMainConfig().getBoolean("capitols-module")) {
+            return parseWarPlaceholder((Player) player, params);
         }
 
-        return String.valueOf(PlayerLevelCalculator.calculatePlayerLevel((Player) player).level);
+        return null;
     }
 }

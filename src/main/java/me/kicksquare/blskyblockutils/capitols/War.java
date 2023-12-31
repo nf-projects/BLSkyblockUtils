@@ -29,10 +29,12 @@ public class War {
     public double nationBlueCurrentPoints;
     public double nationRedCurrentPoints;
 
+    //todo save kills
+
     public final int maxDurationHours;
     public final long startTime;
 
-    public final int pointsGoal; // +0.01 points per second for team controlling the beacon, +0.25 points per kill, -0.25 points per death
+    public final int pointsGoal; // +1 points per second for each controlled beacon
 
     // status fields
     public BeaconStatus beaconStatus = BeaconStatus.NEUTRAL;
@@ -103,9 +105,48 @@ public class War {
         return players;
     }
 
+    public boolean isAtWar(Player player) {
+        LandsIntegration api = LandsIntegration.of(BLSkyblockUtils.getPlugin());
+        LandPlayer landPlayer = api.getLandPlayer(player.getUniqueId());
+
+        Collection<? extends Land> lands = landPlayer.getLands();
+        if (!lands.isEmpty()) {
+            for (Land land : lands) {
+
+                // Check if the land is part of a nation
+                Nation nation = land.getNation();
+                if (nation != null) {
+                    if (nation.equals(nationBlue) || nation.equals(nationRed)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     public void broadcastToAllParticipants(String message) {
         for (Player player : getOnlinePlayersInWar(false)) {
             player.sendMessage(colorize(message));
         }
+    }
+
+    // rounded to 3 decimal places
+    public double getNationBlueCurrentPoints() {
+        return Math.round(nationBlueCurrentPoints * 1000.0) / 1000.0;
+    }
+
+    // rounded to 3 decimal places
+    public double getNationRedCurrentPoints() {
+        return Math.round(nationRedCurrentPoints * 1000.0) / 1000.0;
+    }
+
+    public int getSecondsRemaining() {
+        return (int) ((startTime + (maxDurationHours * 60 * 60 * 1000)) - System.currentTimeMillis()) / 1000;
+    }
+
+    public int getSecondsElapsed() {
+        return (int) ((System.currentTimeMillis() - startTime) / 1000);
     }
 }
