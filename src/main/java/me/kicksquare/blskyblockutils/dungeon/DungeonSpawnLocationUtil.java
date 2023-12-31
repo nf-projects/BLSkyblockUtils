@@ -15,19 +15,20 @@ public class DungeonSpawnLocationUtil {
     private static final BLSkyblockUtils plugin = BLSkyblockUtils.getPlugin();
 
     public static void generateValidSpawnLocations() {
-        int minX = 11;
-        int minY = 70;
-        int minZ = -40;
-        int maxX = 80;
-        int maxY = 74;
-        int maxZ = 39;
+        int minX = plugin.getMainConfig().getInt("dungeon-minX");
+        int minY = plugin.getMainConfig().getInt("dungeon-minY");
+        int minZ = plugin.getMainConfig().getInt("dungeon-minZ");
+        int maxX = plugin.getMainConfig().getInt("dungeon-maxX");
+        int maxY = plugin.getMainConfig().getInt("dungeon-maxY");
+        int maxZ = plugin.getMainConfig().getInt("dungeon-maxZ");
 
         World world = Bukkit.getWorld("dungeon");
 
         List<Location> spawnLocations = new ArrayList<>();
-        int maxAttempts = 50000;
+        int maxAttempts = 10000;
         int attempts = 0;
 
+        // generate 1000 dungeon spawn locations
         while (spawnLocations.size() < 1000 && attempts < maxAttempts) {
             int x = ThreadLocalRandom.current().nextInt(minX, maxX);
             int y = ThreadLocalRandom.current().nextInt(minY, maxY);

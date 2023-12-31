@@ -2,6 +2,7 @@ package me.kicksquare.blskyblockutils.dungeon;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
+import me.kicksquare.blskyblockutils.BLSkyblockUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Creeper;
@@ -13,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class DungeonSpawner {
-    public static void attemptToSpawnMobInDungeon(List<Location> validSpawnLocations, int limit, MythicBukkit mythicBukkit) {
+    public static void attemptToSpawnMobInDungeon(List<Location> validSpawnLocations, int limit, MythicBukkit mythicBukkit, BLSkyblockUtils plugin) {
         if (validSpawnLocations.size() == 0) {
             return;
         }
@@ -40,16 +41,7 @@ public class DungeonSpawner {
         randomSpawnLocation.setY(randomSpawnLocation.getY() + 3);
 
         // constant: list of possible mob type names
-        List<String> mobTypes = new ArrayList<>();
-        mobTypes.add("banditema_em");
-        mobTypes.add("banditema_em");
-        mobTypes.add("banditema_em");
-        mobTypes.add("banditemb_em");
-        mobTypes.add("banditemb_em");
-        mobTypes.add("banditemb_em");
-        mobTypes.add("banditemc_em");
-        mobTypes.add("banditemc_em");
-        mobTypes.add("banditemc_em");
+        List<String> mobTypes = plugin.getMainConfig().getStringList("dungeon-mobs");
 
         // randomly select a mob type to spawn
         int randomMobTypeIndex = (int) (Math.random() * mobTypes.size());

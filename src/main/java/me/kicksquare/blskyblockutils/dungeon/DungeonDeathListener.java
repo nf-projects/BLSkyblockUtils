@@ -1,5 +1,6 @@
 package me.kicksquare.blskyblockutils.dungeon;
 
+import me.kicksquare.blskyblockutils.BLSkyblockUtils;
 import me.kicksquare.blskyblockutils.util.ExperienceUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,6 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class DungeonDeathListener implements Listener {
+    private final BLSkyblockUtils plugin;
+
+    public DungeonDeathListener(BLSkyblockUtils plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         if (!event.getEntity().getWorld().getName().equals("dungeon")) return;
@@ -18,8 +25,8 @@ public class DungeonDeathListener implements Listener {
         int xp = ExperienceUtil.getExp(p);
         ExperienceUtil.changeExp(p, -(xp / 2));
 
-        // remove any ores from inventory
-        String[] dungeonItemNames = {"IRON_NUGGET", "LEATHER"};
+        // remove dungeon drops from inventory
+        String[] dungeonItemNames = plugin.getMainConfig().getStringList("dungeon-death-items").toArray(new String[0]);
 
 
         // loops through the inventory and removes any ores

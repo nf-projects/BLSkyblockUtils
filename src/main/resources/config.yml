@@ -1,3 +1,11 @@
+# Modules - turn on or off
+mine-module: true
+dungeon-module: true
+boss-module: true
+leaderboards-module: true
+playerlevel-module: true
+capitols-module: true
+
 respawn-mine-mobs-delay-seconds: 0.5
 
 # max number of mobs that can be in the **OVERWORLD** mine at once
@@ -11,6 +19,36 @@ nether-mine-mobs:
   - "Fire_Imp|12"
   - "Lava_Mite|15"
   - "Lava_Gyser|3"
+
+
+
+
+
+# Defines the region where dungeon mobs can spawn
+dungeon-minX: 11
+dungeon-minY: 70
+dungeon-minZ: -40
+dungeon-maxX: 80
+dungeon-maxY: 74
+dungeon-maxZ: 39
+
+# these mythic mobs will be spawned in the dungeon
+dungeon-mobs:
+    - "banditema_em"
+    - "banditema_em"
+    - "banditema_em"
+    - "banditemb_em"
+    - "banditemb_em"
+    - "banditemb_em"
+    - "banditemc_em"
+    - "banditemc_em"
+    - "banditemc_em"
+
+# any items in the player's inventory with this material type will be DELETED
+# when they die with them in the dungeon
+dungeon-death-items:
+  - "IRON_NUGGET"
+  - "LEATHER"
 
 # Syntax: `[boss name]|[command to run on kill]`
 # %player% will be replaced with the player's name; %boss% will be replaced with the boss's name; %int% will be replaced with a random int between 1 and 4 inclusive
