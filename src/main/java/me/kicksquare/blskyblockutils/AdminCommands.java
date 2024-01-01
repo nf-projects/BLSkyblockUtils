@@ -1,10 +1,18 @@
 package me.kicksquare.blskyblockutils;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.angeschossen.lands.api.LandsIntegration;
 import me.angeschossen.lands.api.nation.Nation;
 import me.kicksquare.blskyblockutils.capitols.Capitol;
 import me.kicksquare.blskyblockutils.capitols.War;
+import me.kicksquare.blskyblockutils.capitols.WarManager;
 import me.kicksquare.blskyblockutils.util.TimeFormatterUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import static me.kicksquare.blskyblockutils.capitols.WarManager.replaceBlueAndRedWithWhite;
 import static me.kicksquare.blskyblockutils.util.ColorUtil.colorize;
 
 public class AdminCommands implements CommandExecutor {
@@ -37,12 +46,14 @@ public class AdminCommands implements CommandExecutor {
         // /blskyblockutils getActiveWar
         // /blskyblockutils endWar
         // /blskyblockutils startwar <nation blue> <nation red> <capitol region name> <maxDurationHours> <pointsGoal>
+        // /blskyblockutils resetallbeacons
 
         if (args.length == 0) {
             player.sendMessage("Usage: ");
             player.sendMessage("/blskyblockutils getActiveWar");
             player.sendMessage("/blskyblockutils endWar");
             player.sendMessage("/blskyblockutils startwar <nation blue> <nation red> <capitol region name> <maxDurationHours> <pointsGoal>");
+            player.sendMessage("/blskyblockutils resetallbeacons");
         }
 
         if (args.length == 1) {
@@ -57,7 +68,10 @@ public class AdminCommands implements CommandExecutor {
                 player.sendMessage(colorize("&Active war: " + war.nationBlue.getName() + " vs " + war.nationRed.getName()));
                 player.sendMessage(colorize("&aBlue Points: " + war.getNationBlueCurrentPoints()));
                 player.sendMessage(colorize("&aRed Points: " + war.getNationRedCurrentPoints()));
-                player.sendMessage(colorize("&aBeacon status: " + war.beaconStatus.toString()));
+                player.sendMessage(colorize("&aBeacon 1 status: " + war.getBeaconStatus(1).toString()));
+                player.sendMessage(colorize("&aBeacon 2 status: " + war.getBeaconStatus(2).toString()));
+                player.sendMessage(colorize("&aBeacon 3 status: " + war.getBeaconStatus(3).toString()));
+                player.sendMessage(colorize("&aBeacon 4 status: " + war.getBeaconStatus(4).toString()));
                 player.sendMessage(colorize("&aTime Elapsed: " + TimeFormatterUtil.formatSeconds(war.getSecondsElapsed())));
                 player.sendMessage(colorize("&aTime Remaining: " + TimeFormatterUtil.formatSeconds(war.getSecondsRemaining())));
 
@@ -70,14 +84,28 @@ public class AdminCommands implements CommandExecutor {
                     return true;
                 }
 
-                War war = plugin.endCurrentWar();
+                WarManager.endWar();
+                return true;
+            }
 
-                player.sendMessage(colorize("&aEnded war: " + war.nationBlue.getName() + " vs " + war.nationRed.getName()));
-                player.sendMessage(colorize("&aBlue Points: " + war.getNationBlueCurrentPoints()));
-                player.sendMessage(colorize("&aRed Points: " + war.getNationRedCurrentPoints()));
-                player.sendMessage(colorize("&aBeacon status: " + war.beaconStatus.toString()));
-                player.sendMessage(colorize("&aTime Elapsed: " + TimeFormatterUtil.formatSeconds(war.getSecondsElapsed())));
-                player.sendMessage(colorize("&aTime Remaining: " + TimeFormatterUtil.formatSeconds(war.getSecondsRemaining())));
+            if (args[0].equalsIgnoreCase("resetallbeacons")) {
+                World world = Bukkit.getWorld("world");
+                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                RegionManager regions = container.get(BukkitAdapter.adapt(world));
+
+                for (String beaconRegionName : Capitol.getAllBeaconRegionNames()) {
+                    ProtectedRegion beaconRegion = regions.getRegion(beaconRegionName);
+
+                    if (beaconRegion == null) {
+                        player.sendMessage("Region " + beaconRegionName + " does not exist! Continuing...");
+                        continue;
+                    }
+
+                    replaceBlueAndRedWithWhite(beaconRegion);
+                }
+
+                player.sendMessage("All beacons have been reset to white/neutral!");
+
                 return true;
             }
         }

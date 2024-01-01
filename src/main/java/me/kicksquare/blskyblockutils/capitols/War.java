@@ -26,10 +26,11 @@ public class War {
 
     public final Capitol capitol;
 
-    public double nationBlueCurrentPoints;
-    public double nationRedCurrentPoints;
+    public double nationBlueCurrentPoints = 0;
+    public double nationRedCurrentPoints = 0;
 
-    //todo save kills
+    public int nationBlueKills = 0;
+    public int nationRedKills = 0;
 
     public final int maxDurationHours;
     public final long startTime;
@@ -37,7 +38,10 @@ public class War {
     public final int pointsGoal; // +1 points per second for each controlled beacon
 
     // status fields
-    public BeaconStatus beaconStatus = BeaconStatus.NEUTRAL;
+    public BeaconStatus beaconOneStatus = BeaconStatus.NEUTRAL;
+    public BeaconStatus beaconTwoStatus = BeaconStatus.NEUTRAL;
+    public BeaconStatus beaconThreeStatus = BeaconStatus.NEUTRAL;
+    public BeaconStatus beaconFourStatus = BeaconStatus.NEUTRAL;
 
     public boolean oneHourWarningSent = false;
     public boolean thirtyMinuteWarningSent = false;
@@ -53,12 +57,56 @@ public class War {
         this.startTime = System.currentTimeMillis();
     }
 
+    public BeaconStatus getBeaconStatus(int beaconNumber) {
+        switch (beaconNumber) {
+            case 1:
+                return beaconOneStatus;
+            case 2:
+                return beaconTwoStatus;
+            case 3:
+                return beaconThreeStatus;
+            case 4:
+                return beaconFourStatus;
+            default:
+                throw new IllegalArgumentException("Invalid beacon number: " + beaconNumber);
+        }
+    }
+
+    public void setBeaconStatus(int beaconNumber, BeaconStatus status) {
+        switch (beaconNumber) {
+            case 1:
+                beaconOneStatus = status;
+                break;
+            case 2:
+                beaconTwoStatus = status;
+                break;
+            case 3:
+                beaconThreeStatus = status;
+                break;
+            case 4:
+                beaconFourStatus = status;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid beacon number: " + beaconNumber);
+        }
+    }
+
     public void addPointsToBlue(double points) {
         nationBlueCurrentPoints += points;
     }
 
     public void addPointsToRed(double points) {
         nationRedCurrentPoints += points;
+    }
+
+    public void addKillToBlue() {
+        nationBlueKills++;
+        addPointsToBlue(50);
+    }
+
+    public void addKillToRed() {
+        nationRedKills++;
+        addPointsToRed(50);
     }
 
     // returns all Bukkit Players who are 1) part of the war and 2) in the capitol region
@@ -78,7 +126,7 @@ public class War {
 
             // Check if the player is in the region
             if (mustBeInRegion
-                && !region.contains(wgLoc.getBlockX(), wgLoc.getBlockY(), wgLoc.getBlockZ())
+                    && !region.contains(wgLoc.getBlockX(), wgLoc.getBlockY(), wgLoc.getBlockZ())
             ) {
                 continue;
             }

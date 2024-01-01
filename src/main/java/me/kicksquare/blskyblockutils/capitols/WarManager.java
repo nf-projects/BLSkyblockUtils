@@ -19,6 +19,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -44,13 +45,7 @@ public class WarManager {
         long timeElapsed = System.currentTimeMillis() - war.startTime;
         long timeRemaining = (war.maxDurationHours * 60 * 60 * 1000) - timeElapsed;
         if (timeRemaining <= 0) {
-            // war is over
-            war.broadcastToAllParticipants("&c&lThe war has ended! &7The beacon was controlled by " + (war.nationBlueCurrentPoints > war.nationRedCurrentPoints ? war.nationBlue.getName() : war.nationRed.getName()) + "!");
-            war.broadcastToAllParticipants("&9&lBLUE TEAM: &7" + war.nationBlueCurrentPoints + " points");
-            war.broadcastToAllParticipants("&c&lRED TEAM: &7" + war.nationRedCurrentPoints + " points");
-            war.broadcastToAllParticipants("&a&lWINNER: &7" + (war.nationBlueCurrentPoints > war.nationRedCurrentPoints ? war.nationBlue.getName() : war.nationRed.getName()));
-
-            //todo replace all red/blue blocks with white
+            endWar();
 
             return null;
         } else if (timeRemaining <= 20 * 60 * 1000 && !war.oneHourWarningSent) {
@@ -70,85 +65,113 @@ public class WarManager {
         return war;
     }
 
+    public static void endWar() {
+        War war = BLSkyblockUtils.getPlugin().getCurrentWar();
+
+        war.broadcastToAllParticipants("&c&lThe war has ended! &7The beacon was controlled by " + (war.nationBlueCurrentPoints > war.nationRedCurrentPoints ? war.nationBlue.getName() : war.nationRed.getName()) + "!");
+        war.broadcastToAllParticipants("&9&lBLUE TEAM POINTS: &7" + war.nationBlueCurrentPoints + " points");
+        war.broadcastToAllParticipants("&c&lRED TEAM POINTS: &7" + war.nationRedCurrentPoints + " points");
+        war.broadcastToAllParticipants("&a&lWINNER: &7" + (war.nationBlueCurrentPoints > war.nationRedCurrentPoints ? war.nationBlue.getName() : war.nationRed.getName()));
+
+        // replace all red/blue blocks with white
+        World world = Bukkit.getWorld("world");
+        // go through every beacon region
+        for (int beaconNumber = 1; beaconNumber <= 4; beaconNumber++) {
+            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+            RegionManager regions = container.get(BukkitAdapter.adapt(world));
+            ProtectedRegion beaconRegion = regions.getRegion(war.capitol.getBeaconRegionName(beaconNumber));
+
+            replaceBlueAndRedWithWhite(beaconRegion);
+        }
+
+        BLSkyblockUtils.getPlugin().endCurrentWar();
+    }
+
     private static War handleBeaconLogic(War war, List<Player> playersInWarzone) {
-        int nationBluePlayersInBeaconRegion = 0;
-        int nationRedPlayersInBeaconRegion = 0;
+        // there are 4 beacons in total
+        // iterate through all 4
+        for (int beaconNumber = 1; beaconNumber <= 4; beaconNumber++) {
+            int nationBluePlayersInBeaconRegion = 0;
+            int nationRedPlayersInBeaconRegion = 0;
 
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager regions = container.get(BukkitAdapter.adapt(Bukkit.getWorld("world")));
-        ProtectedRegion beaconRegion = regions.getRegion(war.capitol.getBeaconRegionName());
-        LandsIntegration api = LandsIntegration.of(BLSkyblockUtils.getPlugin());
+            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+            RegionManager regions = container.get(BukkitAdapter.adapt(Bukkit.getWorld("world")));
+            ProtectedRegion beaconRegion = regions.getRegion(war.capitol.getBeaconRegionName(beaconNumber));
+            LandsIntegration api = LandsIntegration.of(BLSkyblockUtils.getPlugin());
 
-        for (Player p : playersInWarzone) {
-            // check if this player is in the beacon region
+            for (Player p : playersInWarzone) {
+                // check if this player is in the beacon region
 
-            Location playerLoc = p.getLocation();
+                Location playerLoc = p.getLocation();
 
-            // Convert Bukkit location to WorldGuard location
-            com.sk89q.worldedit.util.Location wgPlayerLoc = BukkitAdapter.adapt(playerLoc);
+                // Convert Bukkit location to WorldGuard location
+                com.sk89q.worldedit.util.Location wgPlayerLoc = BukkitAdapter.adapt(playerLoc);
 
-            // Check if the player is in the region
-            if (beaconRegion.contains(wgPlayerLoc.getBlockX(), wgPlayerLoc.getBlockY(), wgPlayerLoc.getBlockZ())) {
-                // check if the player is in nation A or B
-                LandPlayer landPlayer = api.getLandPlayer(p.getUniqueId());
+                // Check if the player is in the region
+                if (beaconRegion.contains(wgPlayerLoc.getBlockX(), wgPlayerLoc.getBlockY(), wgPlayerLoc.getBlockZ())) {
+                    // check if the player is in nation A or B
+                    LandPlayer landPlayer = api.getLandPlayer(p.getUniqueId());
 
-                Collection<? extends Land> lands = landPlayer.getLands();
-                if (!lands.isEmpty()) {
-                    for (Land land : lands) {
+                    Collection<? extends Land> lands = landPlayer.getLands();
+                    if (!lands.isEmpty()) {
+                        for (Land land : lands) {
 
-                        // Check if the land is part of a nation
-                        Nation nation = land.getNation();
-                        if (nation != null) {
-                            // Check if the nation is nation A or B
-                            if (nation.getName().equals(war.nationBlue.getName())) {
-                                nationBluePlayersInBeaconRegion++;
-                            } else if (nation.getName().equals(war.nationRed.getName())) {
-                                nationRedPlayersInBeaconRegion++;
+                            // Check if the land is part of a nation
+                            Nation nation = land.getNation();
+                            if (nation != null) {
+                                // Check if the nation is nation A or B
+                                if (nation.getName().equals(war.nationBlue.getName())) {
+                                    nationBluePlayersInBeaconRegion++;
+                                } else if (nation.getName().equals(war.nationRed.getName())) {
+                                    nationRedPlayersInBeaconRegion++;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        BeaconStatus currentStatus = war.beaconStatus;
+            BeaconStatus currentStatus = war.getBeaconStatus(beaconNumber);
 
-        if (nationBluePlayersInBeaconRegion == nationRedPlayersInBeaconRegion) {
-            // same amount of players - no change
+            if (nationBluePlayersInBeaconRegion == nationRedPlayersInBeaconRegion) {
+                // same amount of players - no change
 
-        } else if (nationBluePlayersInBeaconRegion > nationRedPlayersInBeaconRegion) {
-            // more blue than red
-            if (currentStatus != BeaconStatus.BLUE) {
-                // change to blue
-                war.beaconStatus = BeaconStatus.BLUE;
+            } else if (nationBluePlayersInBeaconRegion > nationRedPlayersInBeaconRegion) {
+                // more blue than red
+                if (currentStatus != BeaconStatus.BLUE) {
+                    // change to blue
+                    war.setBeaconStatus(beaconNumber, BeaconStatus.BLUE);
 
-                war.broadcastToAllParticipants("&e&lBEACON CAPTURED! &7The beacon has been captured by &b" + war.nationBlue.getName() + "&7!");
+                    war.broadcastToAllParticipants("&e&lBEACON " + beaconNumber +
+                            " CAPTURED! &7The beacon has been captured by &b" + war.nationBlue.getName() + "&7!");
 
-                replaceRedAndWhiteWithBlue(beaconRegion);
+                    replaceRedAndWhiteWithBlue(beaconRegion);
+                }
+
+            } else if (nationBluePlayersInBeaconRegion < nationRedPlayersInBeaconRegion) {
+                // more red than blue
+                if (currentStatus != BeaconStatus.RED) {
+                    // change to red
+                    war.setBeaconStatus(beaconNumber, BeaconStatus.RED);
+
+                    war.broadcastToAllParticipants("&e&lBEACON " + beaconNumber +
+                            " CAPTURED! &7The beacon has been captured by &c" + war.nationRed.getName() + "&7!");
+
+                    replaceBlueAndWhiteWithRed(beaconRegion);
+                }
             }
 
-        } else if (nationBluePlayersInBeaconRegion < nationRedPlayersInBeaconRegion) {
-            // more red than blue
-            if (currentStatus != BeaconStatus.RED) {
-                // change to red
-                war.beaconStatus = BeaconStatus.RED;
-
-                war.broadcastToAllParticipants("&e&lBEACON CAPTURED! &7The beacon has been captured by &c" + war.nationRed.getName() + "&7!");
-
-                replaceBlueAndWhiteWithRed(beaconRegion);
+            // give out 1 points (per second) to the nation that owns the beacon
+            switch (war.getBeaconStatus(beaconNumber)) {
+                case BLUE:
+                    war.addPointsToBlue(1);
+                    break;
+                case RED:
+                    war.addPointsToRed(1);
+                    break;
+                case NEUTRAL:
+                    break;
             }
-        }
-
-        // give out 1 points (per second) to the nation that owns the beacon
-        switch (war.beaconStatus) {
-            case BLUE:
-                war.addPointsToBlue(1);
-                break;
-            case RED:
-                war.addPointsToRed(1);
-                break;
-            case NEUTRAL:
-                break;
         }
 
         return war;
@@ -199,7 +222,6 @@ public class WarManager {
         replaceBlockInRegion(beaconRegion, Material.WHITE_GLAZED_TERRACOTTA, Material.RED_GLAZED_TERRACOTTA, Material.BLUE_GLAZED_TERRACOTTA);
     }
 
-
     private static void replaceBlueAndWhiteWithRed(ProtectedRegion beaconRegion) {
         // replace all blue wool & white wool with red wool
         replaceBlockInRegion(beaconRegion, Material.BLUE_WOOL, Material.WHITE_WOOL, Material.RED_WOOL);
@@ -214,7 +236,7 @@ public class WarManager {
         replaceBlockInRegion(beaconRegion, Material.WHITE_GLAZED_TERRACOTTA, Material.BLUE_GLAZED_TERRACOTTA, Material.RED_GLAZED_TERRACOTTA);
     }
 
-    private static void replaceBlueAndRedWithWhite(ProtectedRegion beaconRegion) {
+    public static void replaceBlueAndRedWithWhite(ProtectedRegion beaconRegion) {
         // replace all blue wool & red wool with white wool
         replaceBlockInRegion(beaconRegion, Material.BLUE_WOOL, Material.RED_WOOL, Material.WHITE_WOOL);
 
@@ -228,6 +250,6 @@ public class WarManager {
         replaceBlockInRegion(beaconRegion, Material.BLUE_GLAZED_TERRACOTTA, Material.RED_GLAZED_TERRACOTTA, Material.WHITE_GLAZED_TERRACOTTA);
     }
 
-    // todo event listener: kills, deaths, etc.
+    //todo event listener: kills, deaths, etc.
     // 50 or so points per kill
 }

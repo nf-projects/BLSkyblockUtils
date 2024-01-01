@@ -6,6 +6,7 @@ import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import me.kicksquare.blskyblockutils.capitols.War;
+import me.kicksquare.blskyblockutils.capitols.WarKillListener;
 import me.kicksquare.blskyblockutils.capitols.WarManager;
 import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
@@ -155,6 +156,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
                 currentWar = WarManager.tickWar(currentWar, this);
             }, 0, 20); // once a second
 
+            Bukkit.getPluginManager().registerEvents(new WarKillListener(this), this);
         }
     }
 
