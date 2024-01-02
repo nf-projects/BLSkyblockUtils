@@ -12,15 +12,16 @@ public class PlaceholderCalculator {
 
         // if there is no war, all of this is null automatically
         War war = BLSkyblockUtils.getPlugin().getCurrentWar();
-        if (war == null) return "NO_WAR";
+        if (war == null) return "No war active";
 
-        if(!war.isAtWar(player) && (!player.hasPermission("blskyblockutils.managewars"))) return "NO_WAR";
+        if (!war.isAtWar(player) && (!player.hasPermission("blskyblockutils.managewars")))
+            return "No war active";
 
         switch (params) {
             case "war_status":
-                // returns "true" if the player is at war, "NO_WAR" if not
+                // returns "true" if the player is at war, "No war active" if not
 
-                return (war.isAtWar(player) || player.hasPermission("blskyblockutils.managewars")) ? "true" : "NO_WAR";
+                return (war.isAtWar(player) || player.hasPermission("blskyblockutils.managewars")) ? "true" : "No war active";
             case "war_nation_blue":
                 return war.nationBlue.getName();
 
