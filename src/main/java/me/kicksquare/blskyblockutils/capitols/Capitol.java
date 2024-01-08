@@ -18,12 +18,49 @@ public enum Capitol {
         this.regionName = regionName;
     }
 
+    public static Capitol get(String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        // Replace underscores and convert to uppercase for uniformity
+        String processedName = name.replace("_", "").toUpperCase();
+
+        // Check against enum names
+        for (Capitol capitol : Capitol.values()) {
+            if (capitol.name().replace("_", "").equalsIgnoreCase(processedName)) {
+                return capitol;
+            }
+
+            // Check against region names
+            if (capitol.getRegionName().replace("_", "").equalsIgnoreCase(processedName)) {
+                return capitol;
+            }
+        }
+
+        // Return null if no match is found
+        return null;
+    }
+
+
     public String getRegionName() {
         return regionName;
     }
 
     public String getBeaconRegionName(int num) {
         return regionName + "_beacon_" + num;
+    }
+
+    public static List<Capitol> getAllCapitols() {
+        return Arrays.asList(
+                NORTH_AMERICA,
+                SOUTH_AMERICA,
+                EUROPE,
+                AFRICA,
+                ASIA,
+                AUSTRALIA,
+                ANTARCTICA
+        );
     }
 
     public static List<String> getAllBeaconRegionNames() {

@@ -115,12 +115,10 @@ public class SpawnEggManager {
             return;
         }
 
-        Location location = event.getClickedBlock().getLocation().add(0, 1, 0);
-
         // remove the spawn egg from the player's inventory
         event.getItem().setAmount(event.getItem().getAmount() - 1);
 
-        spawnMythicMob(mythicMobName, location);
+        spawnMythicMob(mythicMobName);
         player.sendMessage(ChatColor.GREEN + "Spawned " + mythicMobName + "!");
         activeBossFights.add(new ActiveBossFight(player.getName(), mythicMobName));
 
@@ -235,11 +233,11 @@ public class SpawnEggManager {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm m kill " + mythicMobName);
     }
 
-    private void spawnMythicMob(String mythicMobName, Location location) {
+    private void spawnMythicMob(String mythicMobName) {
         despawnMythicMob(mythicMobName);
 
         // command format: /mm mobs spawn [mob_name]:<level> <amount> <world,x,y,z,yaw,pitch> Spawns mobs with the provided name.
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm mobs spawn " + mythicMobName + ":1 1 dungeon,48.0,72.0,0.0,0.0,0.0");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm mobs spawn " + mythicMobName + ":1 1 " + plugin.getMainConfig().getString("boss-spawn-location"));
     }
 
     public void despawnAllMythicMobs() {

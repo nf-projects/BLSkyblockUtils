@@ -1,20 +1,18 @@
 package me.kicksquare.blskyblockutils.capitols;
 
 import me.kicksquare.blskyblockutils.BLSkyblockUtils;
+import me.kicksquare.blskyblockutils.capitols.buffs.CapitalControllerManager;
 import me.kicksquare.blskyblockutils.util.TimeFormatterUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class PlaceholderCalculator {
     public static String parseWarPlaceholder(Player player, String params) {
-        // %blskyblockutils_war_[status|beaconcontrol_[capitol]_[beacon num]|nation_blue|nation_red|beacon[1-4]_status|all_beacons|blue_points|red_points|blue_kills|red_kills|time_elapsed|time_remaining|point_goal]%
+        // %blskyblockutils_war_[status|beaconcontrol_[capitol]_[beacon num]|nation_blue|nation_red|beacon[1-4]_status|all_beacons|blue_points|red_points|blue_kills|red_kills|time_elapsed|time_remaining|point_goal]|war_controller|[capitol name]%
         // so params can be "war_status", "war_nation_blue", etc.
 
         // if there is no war, all of this is null automatically
         War war = BLSkyblockUtils.getPlugin().getCurrentWar();
-        if (war == null) return "NO_WAR";
-
-        if(!war.isAtWar(player) && (!player.hasPermission("blskyblockutils.managewars"))) return "NO_WAR";
 
         switch (params) {
             case "war_status":
@@ -93,14 +91,35 @@ public class PlaceholderCalculator {
                         return null;
                     }
 
-                    Capitol capitol = Capitol.valueOf(split[2].toUpperCase());
+                    Capitol capitol = Capitol.get(split[2].toUpperCase());
                     if (capitol == null) {
                         Bukkit.getLogger().warning("Invalid placeholder: " + params);
                         return null;
                     }
 
+                    if (war == null) {
+                        return "&f&lNEUTRAL";
+                    }
+
                     BeaconStatus status = war.getBeaconStatus(beaconNum);
                     return status.equals(BeaconStatus.NEUTRAL) ? "&f&lNEUTRAL" : status.equals(BeaconStatus.BLUE) ? "&9&l" + war.nationBlue.getName() : "&c&l" + war.nationRed.getName();
+                }
+
+                // for war_controller_[capitol]
+                if (params.startsWith("war_controller_")) {
+                    String[] split = params.split("_");
+                    if (split.length < 3) {
+                        Bukkit.getLogger().warning("PAPI BLSKYBLOCKUTILS Invalid placeholder: " + params + " (split length is not 3)");
+                        return null;
+                    }
+
+                    Capitol capitol = Capitol.get(split[2].toUpperCase());
+                    if (capitol == null) {
+                        Bukkit.getLogger().warning("PAPI BLSKYBLOCKUTILS Invalid placeholder: " + params + " (capitol is null)");
+                        return null;
+                    }
+
+                    return BLSkyblockUtils.getPlugin().getCapitalControllerManager().getCapitolController(capitol);
                 }
 
                 return null;

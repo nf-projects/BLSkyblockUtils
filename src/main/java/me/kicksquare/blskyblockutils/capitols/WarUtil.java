@@ -19,14 +19,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collection;
 import java.util.List;
 
-public class WarManager {
+public class WarUtil {
     public static War tickWar(War war, BLSkyblockUtils plugin) {
         if (war == null) {
             return null;

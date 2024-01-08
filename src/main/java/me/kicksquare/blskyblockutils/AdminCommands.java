@@ -9,7 +9,7 @@ import me.angeschossen.lands.api.LandsIntegration;
 import me.angeschossen.lands.api.nation.Nation;
 import me.kicksquare.blskyblockutils.capitols.Capitol;
 import me.kicksquare.blskyblockutils.capitols.War;
-import me.kicksquare.blskyblockutils.capitols.WarManager;
+import me.kicksquare.blskyblockutils.capitols.WarUtil;
 import me.kicksquare.blskyblockutils.util.TimeFormatterUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -17,10 +17,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static me.kicksquare.blskyblockutils.capitols.WarManager.replaceBlueAndRedWithWhite;
+import static me.kicksquare.blskyblockutils.capitols.WarUtil.replaceBlueAndRedWithWhite;
 import static me.kicksquare.blskyblockutils.util.ColorUtil.colorize;
 
 public class AdminCommands implements CommandExecutor {
@@ -47,6 +46,8 @@ public class AdminCommands implements CommandExecutor {
         // /blskyblockutils endWar
         // /blskyblockutils startwar <nation blue> <nation red> <capitol region name> <maxDurationHours> <pointsGoal>
         // /blskyblockutils resetallbeacons
+        // /blskyblockutils listCapitols
+        // /blskyblockutils setCapitolController <capitol name> <controller nation name OR None>
 
         if (args.length == 0) {
             player.sendMessage("Usage: ");
@@ -54,6 +55,8 @@ public class AdminCommands implements CommandExecutor {
             player.sendMessage("/blskyblockutils endWar");
             player.sendMessage("/blskyblockutils startwar <nation blue> <nation red> <capitol region name> <maxDurationHours> <pointsGoal>");
             player.sendMessage("/blskyblockutils resetallbeacons");
+            player.sendMessage("/blskyblockutils listCapitols");
+            player.sendMessage("/blskyblockutils setCapitolController <capitol name> <controller nation name OR None>");
         }
 
         if (args.length == 1) {
@@ -84,7 +87,7 @@ public class AdminCommands implements CommandExecutor {
                     return true;
                 }
 
-                WarManager.endWar();
+                WarUtil.endWar();
                 return true;
             }
 
@@ -106,6 +109,49 @@ public class AdminCommands implements CommandExecutor {
 
                 player.sendMessage("All beacons have been reset to white/neutral!");
 
+                return true;
+            }
+
+            if (args[0].equalsIgnoreCase("listCapitols")) {
+                player.sendMessage("Capitols: ");
+                for (Capitol capitol : Capitol.getAllCapitols()) {
+                    Nation capitolController = LandsIntegration.of(BLSkyblockUtils.getPlugin()).getNationByName(plugin.getCapitalControllerManager().getCapitolController(capitol));
+                    String name = "no one";
+                    if (capitolController != null) {
+                        name = capitolController.getName();
+                    }
+                    player.sendMessage(capitol + " - controlled by " + name);
+                }
+
+                return true;
+            }
+        }
+
+        if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("setCapitolController")) {
+                String capitolName = args[1];
+                String nationName = args[2];
+
+                Capitol capitol = Capitol.valueOf(capitolName);
+                if (capitol == null) {
+                    player.sendMessage("Capitol " + capitolName + " does not exist!");
+                    return true;
+                }
+
+                if (nationName.equalsIgnoreCase("none")) {
+                    plugin.getCapitalControllerManager().setCapitolController(capitol, null);
+                    player.sendMessage("Capitol " + capitolName + " is now controlled by no one!");
+                    return true;
+                }
+
+                Nation nation = LandsIntegration.of(BLSkyblockUtils.getPlugin()).getNationByName(nationName);
+                if (nation == null) {
+                    player.sendMessage("Nation " + nationName + " does not exist!");
+                    return true;
+                }
+
+                plugin.getCapitalControllerManager().setCapitolController(capitol, nation.getName());
+                player.sendMessage("Capitol " + capitolName + " is now controlled by " + nationName + "!");
                 return true;
             }
         }

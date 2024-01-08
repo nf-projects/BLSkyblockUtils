@@ -23,7 +23,6 @@ nether-mine-mobs:
 
 
 
-
 # Defines the region where dungeon mobs can spawn
 dungeon-minX: 11
 dungeon-minY: 70
@@ -56,6 +55,8 @@ dungeon-death-items:
 bosses:
   - "ergeox|mi give CONSUMABLE LEGENDARY_UPGRADE_TOKEN %player% %int%"
 
+boss-spawn-location: "dungeon,48.0,72.0,0.0,0.0,0.0"
+
 # auto updated
 leaderboards-last-sent-date-time: 2023-01-01T00:00:00.000Z
 
@@ -83,3 +84,36 @@ leaderboards-gems-lines:
   - "**#5** - __%playerpoints_leaderboard_5%__ - *%playerpoints_leaderboard_5_amount%*"
 
 
+
+# -----------------------------------
+# CAPITOLS/WARS CONFIG
+# -----------------------------------
+
+capitol_northamerica_controller: "NONE"
+capitol_southamerica_controller: "NONE"
+capitol_europe_controller: "NONE"
+capitol_africa_controller: "NONE"
+capitol_asia_controller: "NONE"
+capitol_australia_controller: "NONE"
+capitol_antarctica_controller: "NONE"
+
+capitol_antarctica_buff_1: "POTION_EFFECT_PERMANENT|DOLPHINS_GRACE|3"
+capitol_antarctica_buff_2: "POTION_EFFECT_PERMANENT|NIGHT_VISION|1"
+
+capitol_south_america_buff_1: "POTION_EFFECT_PERMANENT|JUMP_BOOST|1"
+capitol_south_america_buff_2: "POTION_EFFECT|REGENERATION|1"
+
+capitol_africa_buff_1: "DOUBLE_DROP|IRON_ORE,DIAMOND_ORE"
+capitol_africa_buff_2: "POTION_EFFECT|SPEED|1"
+
+capitol_asia_buff_1: "PERMISSION|shopguiplus.pricemodifiers.buy_discount_10"
+capitol_asia_buff_2: "POTION_EFFECT|HASTE|1"
+
+capitol_europe_buff_1: "DOUBLE_SPAWNS|0.2"
+capitol_europe_buff_2: "PERMISSION_aureliumskills.multiplier.30"
+
+capitol_australia_buff_1: "POTION_EFFECT|SPEED|2"
+capitol_australia_buff_2: "DOUBLE_SPAWNS|0.3"
+
+capitol_north_america_buff_1: "PERMISSION|shopguiplus.pricemodifiers.sell_increase_40"
+capitol_north_america_buff_2: "POTION_EFFECT|INCREASE_DAMAGE|2"

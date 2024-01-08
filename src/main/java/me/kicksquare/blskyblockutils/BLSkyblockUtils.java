@@ -4,10 +4,15 @@ import de.leonhard.storage.Config;
 import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
+import dev.rosewood.rosestacker.api.RoseStackerAPI;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import me.kicksquare.blskyblockutils.capitols.landspermissions.LandsMaxClaimsListener;
+import me.kicksquare.blskyblockutils.capitols.landspermissions.UpdateMaxClaimsCommand;
 import me.kicksquare.blskyblockutils.capitols.War;
 import me.kicksquare.blskyblockutils.capitols.WarKillListener;
-import me.kicksquare.blskyblockutils.capitols.WarManager;
+import me.kicksquare.blskyblockutils.capitols.WarUtil;
+import me.kicksquare.blskyblockutils.capitols.buffs.BuffManager;
+import me.kicksquare.blskyblockutils.capitols.buffs.CapitalControllerManager;
 import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
 import me.kicksquare.blskyblockutils.mine.*;
@@ -15,8 +20,10 @@ import me.kicksquare.blskyblockutils.playerlevel.PlayerLevelCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
+import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -40,6 +47,10 @@ public final class BLSkyblockUtils extends JavaPlugin {
     private SpawnEggManager spawnEggManager;
 
     private War currentWar = null;
+    private CapitalControllerManager capitalControllerManager;
+
+    private RoseStackerAPI rsAPI;
+    private LuckPerms luckPermsApi;
 
     public static BLSkyblockUtils getPlugin() {
         return plugin;
@@ -153,10 +164,42 @@ public final class BLSkyblockUtils extends JavaPlugin {
             }
 
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-                currentWar = WarManager.tickWar(currentWar, this);
+                currentWar = WarUtil.tickWar(currentWar, this);
             }, 0, 20); // once a second
 
             Bukkit.getPluginManager().registerEvents(new WarKillListener(this), this);
+
+            capitalControllerManager = new CapitalControllerManager(this);
+            capitalControllerManager.loadBuffsFromConfig();
+
+            // for buffs
+
+            // check for RoseStacker plugin
+            if (Bukkit.getPluginManager().getPlugin("RoseStacker") != null) {
+                rsAPI = RoseStackerAPI.getInstance();
+
+                if (rsAPI == null) {
+                    getLogger().warning("RoseStacker API is null, capitols module will NOT work.");
+                    Bukkit.getPluginManager().disablePlugin(this);
+                }
+            }
+
+            Bukkit.getPluginManager().registerEvents(new BuffManager(), this);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                BuffManager.tickNationBuffs();
+            }, 0, 20 * 10); // once every 10 seconds
+
+
+            // FOR LANDS MAX-CLAIM SET/ADD/REMOVE COMMANDS
+            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) {
+                luckPermsApi = provider.getProvider();
+            } else {
+                getLogger().warning("LuckPerms API is null, capitols module will NOT work.");
+                Bukkit.getPluginManager().disablePlugin(this);
+            }
+            getCommand("updatemaxclaims").setExecutor(new UpdateMaxClaimsCommand(this, luckPermsApi));
+            Bukkit.getPluginManager().registerEvents(new LandsMaxClaimsListener(this), this);
         }
     }
 
@@ -186,5 +229,13 @@ public final class BLSkyblockUtils extends JavaPlugin {
         War war = currentWar;
         currentWar = null;
         return war;
+    }
+
+    public CapitalControllerManager getCapitalControllerManager() {
+        return capitalControllerManager;
+    }
+
+    public LuckPerms getLuckPermsApi() {
+        return luckPermsApi;
     }
 }

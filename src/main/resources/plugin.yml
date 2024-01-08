@@ -20,3 +20,6 @@ commands:
   playerlevel:
     aliases: [pl, plevel]
     description: Check your player level
+  updatemaxclaims:
+    description: Update the max claims of a given player
+    permission: blskyblockutils.updatemaxclaims
