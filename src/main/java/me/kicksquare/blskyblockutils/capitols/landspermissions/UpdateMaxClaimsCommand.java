@@ -4,6 +4,8 @@ import me.kicksquare.blskyblockutils.BLSkyblockUtils;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
+import net.luckperms.api.node.NodeType;
+import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.node.types.PermissionNode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,7 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class UpdateMaxClaimsCommand implements CommandExecutor {
@@ -31,8 +35,8 @@ public class UpdateMaxClaimsCommand implements CommandExecutor {
                 return true;
             }
 
-            if (args.length != 2 && args.length != 3) {
-                commandSender.sendMessage("Usage: /updatemaxclaims <player> <view|set|add|remove> [amount]");
+            if (args.length < 2 || args.length > 4) {
+                commandSender.sendMessage("Usage: /updatemaxclaims <player> <view|set|add|remove> [amount] [--buycraft]");
                 return true;
             }
 
@@ -48,6 +52,11 @@ public class UpdateMaxClaimsCommand implements CommandExecutor {
                 return true;
             }
 
+            boolean isBuyCraft = Arrays.asList(args).contains("--buycraft");
+            if (isBuyCraft) {
+                args = Arrays.stream(args).filter(arg -> !"--buycraft".equals(arg)).toArray(String[]::new);
+            }
+
             String currentPermissionPrefix = "lands.chunks.";
             String action = args[1].toLowerCase();
 
@@ -57,13 +66,46 @@ public class UpdateMaxClaimsCommand implements CommandExecutor {
                 return true;
             }
 
-            if (args.length < 3) {
+            if (args.length < 3 && !"view".equals(action)) {
                 commandSender.sendMessage("Amount is required for action " + action);
                 return true;
             }
 
             int amount = Integer.parseInt(args[2]);
             int currentMaxClaims = getCurrentMaxClaims(user, currentPermissionPrefix);
+
+            if ("add".equals(action) && isBuyCraft) {
+                Map<String, Integer> rankClaims = new HashMap<>();
+                rankClaims.put("bee", 5);
+                rankClaims.put("rabbit", 10);
+                rankClaims.put("turtle", 15);
+                rankClaims.put("parrot", 20);
+                rankClaims.put("panda", 25);
+                rankClaims.put("tiger", 30);
+
+                // Find the highest rank of the user and its claim chunks
+                int highestRankClaims = user.getNodes(NodeType.INHERITANCE).stream()
+                        .map(InheritanceNode::getGroupName)
+                        .filter(rankClaims::containsKey)
+                        .mapToInt(rankClaims::get)
+                        .max()
+                        .orElse(0);
+
+                // user has default: highestRankClaims is 0
+                // user adds 5: amount is 5, highestRankClaims is 0, we SHOULD add 5
+                // scenario 2: user has turtle: highestRankClaims is 15
+                // user adds 10 (rabbit): amount is 10, highestRankClaims is 15, we SHOULD add 0 because you can't downgrade
+                // scenario 2: user has turtle: highestRankClaims is 15
+                // user adds 25 (panda): amount is 25, highestRankClaims is 15, we SHOULD add 10
+
+                if (amount > highestRankClaims) {
+                    System.out.println("Adding " + amount + ". Highest rank claims: " + highestRankClaims);
+                    amount -= highestRankClaims;
+                } else {
+                    amount = 0;
+                }
+            }
+
             int newMaxClaims = calculateNewMaxClaims(currentMaxClaims, action, amount);
             if (newMaxClaims < 0) {
                 commandSender.sendMessage("Invalid action. Use 'view', 'set', 'add', or 'remove'.");

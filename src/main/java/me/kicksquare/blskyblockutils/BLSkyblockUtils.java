@@ -15,6 +15,7 @@ import me.kicksquare.blskyblockutils.capitols.buffs.BuffManager;
 import me.kicksquare.blskyblockutils.capitols.buffs.CapitalControllerManager;
 import me.kicksquare.blskyblockutils.dungeon.DungeonDeathListener;
 import me.kicksquare.blskyblockutils.dungeon.DungeonSpawnLocationUtil;
+import me.kicksquare.blskyblockutils.killer.VillagerKiller;
 import me.kicksquare.blskyblockutils.mine.*;
 import me.kicksquare.blskyblockutils.playerlevel.PlayerLevelCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
@@ -201,6 +202,12 @@ public final class BLSkyblockUtils extends JavaPlugin {
             getCommand("updatemaxclaims").setExecutor(new UpdateMaxClaimsCommand(this, luckPermsApi));
             Bukkit.getPluginManager().registerEvents(new LandsMaxClaimsListener(this), this);
         }
+
+        // module to periodically kill all villagers, zombie villagers, wandering traders, and trader llamas
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            VillagerKiller.killVillagersEtc();
+        }, 0, 20 * 10); // once every 10 seconds
+
     }
 
     @Override
