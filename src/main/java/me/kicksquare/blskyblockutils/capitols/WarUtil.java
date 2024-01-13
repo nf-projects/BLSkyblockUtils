@@ -248,7 +248,4 @@ public class WarUtil {
         // replace blue/red glazed terracotta with white glazed terracotta
         replaceBlockInRegion(beaconRegion, Material.BLUE_GLAZED_TERRACOTTA, Material.RED_GLAZED_TERRACOTTA, Material.WHITE_GLAZED_TERRACOTTA);
     }
-
-    //todo event listener: kills, deaths, etc.
-    // 50 or so points per kill
 }
