@@ -48,8 +48,10 @@ public class BuffManager implements Listener {
     private static void applyBuff(Player player, Capitol capitol) {
         String buff1 = plugin.getMainConfig().getString("capitol_" + capitol.name().toLowerCase() + "_buff_1");
         String buff2 = plugin.getMainConfig().getString("capitol_" + capitol.name().toLowerCase() + "_buff_2");
+        String buff3 = plugin.getMainConfig().getString("capitol_" + capitol.name().toLowerCase() + "_buff_3");
         parseAndApplyBuff(player, buff1);
         parseAndApplyBuff(player, buff2);
+        parseAndApplyBuff(player, buff3);
     }
 
     private static void parseAndApplyBuff(Player player, String buff) {
