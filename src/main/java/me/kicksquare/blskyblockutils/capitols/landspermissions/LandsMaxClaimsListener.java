@@ -38,6 +38,7 @@ public class LandsMaxClaimsListener implements Listener {
         // either way, we should set it to the highest rank's permission
 
         List<String> ranks = getPlayerGroups(player);
+        int currentMaxClaims = getCurrentLandsChunksPermission(player);
 
         Map<String, Integer> rankToClaims = new HashMap<>();
         rankToClaims.put("bee", 20);
@@ -59,7 +60,10 @@ public class LandsMaxClaimsListener implements Listener {
             setLandsChunksPermission(player, 15);
             System.out.println("[login debug] No rank found! Set lands.chunks permission to 15 for " + player.getName());
             System.out.println("[login debug] Ranks: " + ranks.toString());
-        } else {
+        } else if (highestRankClaims > currentMaxClaims) {
+            // rank found, but it's higher than the current lands.chunks permission
+            // this means there was some sort of an error
+
             // set to the highest rank's claims
             setLandsChunksPermission(player, highestRankClaims);
             System.out.println("[login debug] Rank found! Set lands.chunks permission to " + highestRankClaims + " for " + player.getName());
