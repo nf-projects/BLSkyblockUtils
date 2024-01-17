@@ -105,7 +105,7 @@ public class BuffManager implements Listener {
 
         if (parts[0].endsWith("_PERMANENT")) {
             // Apply the effect permanently (i.e., until it is explicitly removed)
-            PotionEffect effect = new PotionEffect(type, 20 * 10, amplifier, true, false);
+            PotionEffect effect = new PotionEffect(type, 20 * 20, amplifier, true, false);
             player.addPotionEffect(effect, true);
         } else {
             // Apply the effect only if the player is in a chunk claimed by their nation
