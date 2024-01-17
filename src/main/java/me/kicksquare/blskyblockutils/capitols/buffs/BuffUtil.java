@@ -27,6 +27,11 @@ public class BuffUtil {
         Collection<? extends Land> lands = landPlayer.getLands();
         if (!lands.isEmpty()) {
             for (Land land : lands) {
+                if(land.getOwnerUID() != player.getUniqueId()) {
+                    // player needs to be the OWNER of the land, not just a member/trusted
+                    continue;
+                }
+
                 Nation nation = land.getNation();
                 if (nation != null) {
                     Capitol[] capitols = plugin.getCapitalControllerManager().getCapitolsFromController(nation.getName());
@@ -50,12 +55,7 @@ public class BuffUtil {
 
         Land land = locationArea.getLand();
 
-        if (land == null) {
-            return null;
-        }
-
         Nation nation = land.getNation();
-
 
         if (nation == null) {
             return null;
