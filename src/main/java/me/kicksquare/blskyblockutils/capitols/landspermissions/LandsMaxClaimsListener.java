@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LandsMaxClaimsListener implements Listener {
-    private BLSkyblockUtils plugin;
-    private LuckPerms luckPermsApi;
+    private final BLSkyblockUtils plugin;
+    private final LuckPerms luckPermsApi;
 
     public LandsMaxClaimsListener(BLSkyblockUtils blSkyblockUtils) {
         this.plugin = blSkyblockUtils;
@@ -30,7 +30,7 @@ public class LandsMaxClaimsListener implements Listener {
         Player player = event.getPlayer();
         User user = plugin.getLuckPermsApi().getUserManager().getUser(event.getPlayer().getUniqueId());
         if (user == null) {
-            
+
             return;
         }
 
@@ -58,16 +58,16 @@ public class LandsMaxClaimsListener implements Listener {
         if (highestRankClaims == 0) {
             // no rank found, set to 15 claims
             setLandsChunksPermission(player, 15);
-            
-            
+
+
         } else if (highestRankClaims > currentMaxClaims) {
             // rank found, but it's higher than the current lands.chunks permission
             // this means there was some sort of an error
 
             // set to the highest rank's claims
             setLandsChunksPermission(player, highestRankClaims);
-            
-            
+
+
         }
 
     }

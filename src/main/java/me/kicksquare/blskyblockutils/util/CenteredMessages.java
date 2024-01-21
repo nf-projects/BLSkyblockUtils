@@ -19,7 +19,7 @@ public class CenteredMessages {
             if (c == '§') {
                 previousCode = true;
                 continue;
-            } else if (previousCode == true) {
+            } else if (previousCode) {
                 previousCode = false;
                 if (c == 'l' || c == 'L') {
                     isBold = true;
@@ -41,6 +41,6 @@ public class CenteredMessages {
             sb.append(" ");
             compensated += spaceLength;
         }
-        player.sendMessage(sb.toString() + message);
+        player.sendMessage(sb + message);
     }
 }

@@ -12,8 +12,8 @@ public class ColorUtil {
     }
 
     /*
-        * This method is used to colorize hex codes in a string.
-        * Example input String: "Hello #FF0000World"
+     * This method is used to colorize hex codes in a string.
+     * Example input String: "Hello #FF0000World"
      */
     public static String colorizeHexCodes(String message) {
         Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
@@ -23,7 +23,7 @@ public class ColorUtil {
             String replaceSharp = hexCode.replace('#', 'x');
 
             char[] ch = replaceSharp.toCharArray();
-            StringBuilder builder = new StringBuilder("");
+            StringBuilder builder = new StringBuilder();
             for (char c : ch) {
                 builder.append("&").append(c);
             }

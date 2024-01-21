@@ -62,7 +62,6 @@ public class BuffManager implements Listener {
         if (parts.length < 2) {
             throw new IllegalArgumentException("Invalid buff format: " + buff);
         }
-        ;
 
         String buffType = parts[0];
 

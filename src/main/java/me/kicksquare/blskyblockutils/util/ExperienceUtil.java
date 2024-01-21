@@ -8,7 +8,6 @@ public class ExperienceUtil {
      *
      * @param player the Player
      * @return the amount of experience the Player has
-     *
      * @see <a href=http://minecraft.gamepedia.com/Experience#Leveling_up>Experience#Leveling_up</a>
      */
     public static int getExp(Player player) {
@@ -21,7 +20,6 @@ public class ExperienceUtil {
      *
      * @param level the level
      * @return the total experience calculated
-     *
      * @see <a href=http://minecraft.gamepedia.com/Experience#Leveling_up>Experience#Leveling_up</a>
      */
     public static int getExpFromLevel(int level) {
@@ -77,7 +75,6 @@ public class ExperienceUtil {
      * Get the total amount of experience required to progress to the next level.
      *
      * @param level the current level
-     *
      * @see <a href=http://minecraft.gamepedia.com/Experience#Leveling_up>Experience#Leveling_up</a>
      */
     private static int getExpToNext(int level) {
@@ -104,7 +101,7 @@ public class ExperienceUtil {
      * quite slow.
      *
      * @param player the Player affected
-     * @param exp the amount of experience to add or remove
+     * @param exp    the amount of experience to add or remove
      */
     public static void changeExp(Player player, int exp) {
         exp += getExp(player);

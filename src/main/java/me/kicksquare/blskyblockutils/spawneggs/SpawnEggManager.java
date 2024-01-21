@@ -25,11 +25,11 @@ public class SpawnEggManager {
     private final BLSkyblockUtils plugin;
     private final MythicBukkit mythicBukkit;
 
-    private List<String> spawnEggNames = new ArrayList<>();
+    private final List<String> spawnEggNames = new ArrayList<>();
     private final List<BossReward> bossRewards = new ArrayList<>();
 
 
-    private List<ActiveBossFight> activeBossFights = new ArrayList<>();
+    private final List<ActiveBossFight> activeBossFights = new ArrayList<>();
 
     public SpawnEggManager(BLSkyblockUtils plugin, MythicBukkit mythicBukkit) {
         this.plugin = plugin;
@@ -56,7 +56,7 @@ public class SpawnEggManager {
 
     // returns true if it's a valid spawn egg name
     public boolean giveCustomSpawnEgg(Player player, String spawnEggName) {
-        if(!spawnEggNames.contains(spawnEggName)) {
+        if (!spawnEggNames.contains(spawnEggName)) {
             return false;
         }
 
@@ -78,12 +78,12 @@ public class SpawnEggManager {
     public void handleSpawnEggPlaced(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if(event.getItem() == null || event.getItem().getType() != Material.OCELOT_SPAWN_EGG) {
+        if (event.getItem() == null || event.getItem().getType() != Material.OCELOT_SPAWN_EGG) {
             return;
         }
 
         String nbtString = NBTUtil.getNBTString(event.getItem(), "boss_mm_name");
-        if(nbtString == null) {
+        if (nbtString == null) {
             return;
         }
 

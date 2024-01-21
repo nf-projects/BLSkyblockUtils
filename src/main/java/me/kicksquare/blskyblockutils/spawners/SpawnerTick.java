@@ -32,7 +32,6 @@ public class SpawnerTick {
 
         List<String> spawners = plugin.getMainConfig().getStringList("spawners");
 
-        
 
         for (String spawner : spawners) {
             String[] spawnerParts = spawner.split("\\|");
@@ -47,14 +46,14 @@ public class SpawnerTick {
             RegionManager regions = container.get(BukkitAdapter.adapt(Bukkit.getWorld(worldName)));
 
             if (regions == null) {
-                
+
                 continue;
             }
 
             ProtectedRegion region = regions.getRegion(regionName);
 
             if (region == null) {
-                
+
                 continue;
             }
 
@@ -70,7 +69,7 @@ public class SpawnerTick {
 
             // if there are too many mobs, don't spawn any more
             if (numMobs >= maxNum) {
-                
+
                 continue;
             }
 
@@ -84,8 +83,8 @@ public class SpawnerTick {
             int delay = (int) (Math.random() * 3) + 1;
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Bukkit.getWorld(worldName).spawnEntity(Bukkit.getWorld(worldName).getBlockAt(x, y, z).getLocation(), EntityType.valueOf(mobType));
-            }, delay * 20);
-            
+            }, delay * 20L);
+
         }
     }
 
@@ -103,14 +102,14 @@ public class SpawnerTick {
             RegionManager regions = container.get(BukkitAdapter.adapt(Bukkit.getWorld(worldName)));
 
             if (regions == null) {
-                
+
                 continue;
             }
 
             ProtectedRegion region = regions.getRegion(regionName);
 
             if (region == null) {
-                
+
                 continue;
             }
 

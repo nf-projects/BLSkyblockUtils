@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LeaderboardUpdater {
-    public static void attemptToUpdateLeaderboards(BLSkyblockUtils plugin){
+    public static void attemptToUpdateLeaderboards(BLSkyblockUtils plugin) {
 
         Config config = plugin.getMainConfig();
 
@@ -32,7 +32,7 @@ public class LeaderboardUpdater {
         Date currentDate = new Date();
 
         // leaderboards update every 24 hours - if the current date is more than 24 hours after the last update, update the leaderboards and update config
-        if(currentDate.getTime() - lastSentDate.getTime() > 1000 * 60 * 60 * 24){
+        if (currentDate.getTime() - lastSentDate.getTime() > 1000 * 60 * 60 * 24) {
             // update leaderboards
             WebhookClient webhookClient = WebhookClient.withUrl(config.getString("leaderboards-webhook-url"));
             WebhookEmbedBuilder embedBuilder = new WebhookEmbedBuilder();

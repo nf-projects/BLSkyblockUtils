@@ -10,9 +10,9 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 public class MineNetheriteListener implements Listener {
     @EventHandler
     public void onBlockMine(BlockBreakEvent e) {
-        if(!e.getBlock().getWorld().getName().equals("nethermine")) return;
+        if (!e.getBlock().getWorld().getName().equals("nethermine")) return;
 
-        if(e.getBlock().getBlockData().getMaterial() != Material.NETHERITE_BLOCK) return;
+        if (e.getBlock().getBlockData().getMaterial() != Material.NETHERITE_BLOCK) return;
 
         // spawn a blaze shard in any air block next to the netherite block (so it doesn't get glitched inside)
 
@@ -22,17 +22,17 @@ public class MineNetheriteListener implements Listener {
         int z = e.getBlock().getZ();
 
         // check all 6 sides
-        if(e.getBlock().getRelative(1, 0, 0).getType() == Material.AIR) {
+        if (e.getBlock().getRelative(1, 0, 0).getType() == Material.AIR) {
             x++;
-        } else if(e.getBlock().getRelative(-1, 0, 0).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(-1, 0, 0).getType() == Material.AIR) {
             x--;
-        } else if(e.getBlock().getRelative(0, 1, 0).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, 1, 0).getType() == Material.AIR) {
             y++;
-        } else if(e.getBlock().getRelative(0, -1, 0).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, -1, 0).getType() == Material.AIR) {
             y--;
-        } else if(e.getBlock().getRelative(0, 0, 1).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, 0, 1).getType() == Material.AIR) {
             z++;
-        } else if(e.getBlock().getRelative(0, 0, -1).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, 0, -1).getType() == Material.AIR) {
             z--;
         } else {
             // no air block found
@@ -46,18 +46,18 @@ public class MineNetheriteListener implements Listener {
     // failsafe - under no circumstances should a netherite block drop itself
     @EventHandler
     public void onBlockDrop(BlockBreakEvent e) {
-        if(!e.getBlock().getWorld().getName().equals("nethermine")) return;
+        if (!e.getBlock().getWorld().getName().equals("nethermine")) return;
 
-        if(e.getBlock().getBlockData().getMaterial() == Material.NETHERITE_BLOCK) {
+        if (e.getBlock().getBlockData().getMaterial() == Material.NETHERITE_BLOCK) {
             e.setDropItems(false);
         }
     }
 
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent e) {
-        if(!e.getEntity().getWorld().getName().equals("nethermine")) return;
+        if (!e.getEntity().getWorld().getName().equals("nethermine")) return;
 
-        if(e.getEntity().getItemStack().getType() == Material.NETHERITE_BLOCK) {
+        if (e.getEntity().getItemStack().getType() == Material.NETHERITE_BLOCK) {
             e.setCancelled(true);
         }
     }

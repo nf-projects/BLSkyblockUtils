@@ -27,9 +27,9 @@ public class BuffUtil {
         Collection<? extends Land> lands = landPlayer.getLands();
         if (!lands.isEmpty()) {
             for (Land land : lands) {
-                if(!land.getOwnerUID().equals(player.getUniqueId())) {
+                if (!land.getOwnerUID().equals(player.getUniqueId())) {
                     // player needs to be the OWNER of the land, not just a member/trusted
-                    
+
                     continue;
                 }
 

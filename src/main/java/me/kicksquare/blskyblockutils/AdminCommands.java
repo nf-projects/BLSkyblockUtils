@@ -145,7 +145,7 @@ public class AdminCommands implements CommandExecutor {
                 // if applicable, dye color (R G B values)
 
                 NBTItem nbtItem = new NBTItem(item);
-                player.sendMessage("NBT: " + nbtItem.toString());
+                player.sendMessage("NBT: " + nbtItem);
 
                 if (item.getItemMeta().hasCustomModelData()) {
                     player.sendMessage("Custom Model Data: " + item.getItemMeta().getCustomModelData());
@@ -186,7 +186,7 @@ public class AdminCommands implements CommandExecutor {
                 return true;
             }
         }
-        
+
         if (args.length == 6) {
             if (args[0].equalsIgnoreCase("startwar")) {
                 String nationBlueName = args[1];
@@ -194,7 +194,7 @@ public class AdminCommands implements CommandExecutor {
                 String capitolRegionName = args[3];
                 int maxDurationHours = Integer.parseInt(args[4]);
                 int pointsGoal = Integer.parseInt(args[5]);
-                
+
                 // try to parse the 2 nation names as Nation objects
                 // if either of them are null, then the nation name was invalid
                 LandsIntegration api = LandsIntegration.of(BLSkyblockUtils.getPlugin());
@@ -225,8 +225,8 @@ public class AdminCommands implements CommandExecutor {
                 player.sendMessage("Started war: " + nationBlue.getName() + " vs " + nationRed.getName());
             }
         }
-        
-        
+
+
         return true;
     }
 }

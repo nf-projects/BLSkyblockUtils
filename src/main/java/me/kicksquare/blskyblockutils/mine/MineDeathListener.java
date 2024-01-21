@@ -10,7 +10,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 public class MineDeathListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        if (!(event.getEntity().getWorld().getName().equals("mine") || event.getEntity().getWorld().getName().equals("nethermine"))) return;
+        if (!(event.getEntity().getWorld().getName().equals("mine") || event.getEntity().getWorld().getName().equals("nethermine")))
+            return;
 
         Player p = event.getEntity();
 

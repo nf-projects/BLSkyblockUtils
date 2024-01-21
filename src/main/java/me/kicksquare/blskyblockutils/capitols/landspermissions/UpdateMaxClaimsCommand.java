@@ -99,7 +99,7 @@ public class UpdateMaxClaimsCommand implements CommandExecutor {
                 // user adds 25 (panda): amount is 25, highestRankClaims is 15, we SHOULD add 10
 
                 if (amount > highestRankClaims) {
-                    
+
                     amount -= highestRankClaims;
                 } else {
                     amount = 0;

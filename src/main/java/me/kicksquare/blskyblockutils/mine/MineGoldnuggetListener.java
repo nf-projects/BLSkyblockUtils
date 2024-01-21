@@ -10,9 +10,9 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 public class MineGoldnuggetListener implements Listener {
     @EventHandler
     public void onBlockMine(BlockBreakEvent e) {
-        if(!e.getBlock().getWorld().getName().equals("nethermine")) return;
+        if (!e.getBlock().getWorld().getName().equals("nethermine")) return;
 
-        if(e.getBlock().getBlockData().getMaterial() != Material.NETHER_GOLD_ORE) return;
+        if (e.getBlock().getBlockData().getMaterial() != Material.NETHER_GOLD_ORE) return;
 
         // spawn nethergold in any air block next to the nether gold block (so it doesn't get glitched inside)
 
@@ -22,17 +22,17 @@ public class MineGoldnuggetListener implements Listener {
         int z = e.getBlock().getZ();
 
         // check all 6 sides
-        if(e.getBlock().getRelative(1, 0, 0).getType() == Material.AIR) {
+        if (e.getBlock().getRelative(1, 0, 0).getType() == Material.AIR) {
             x++;
-        } else if(e.getBlock().getRelative(-1, 0, 0).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(-1, 0, 0).getType() == Material.AIR) {
             x--;
-        } else if(e.getBlock().getRelative(0, 1, 0).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, 1, 0).getType() == Material.AIR) {
             y++;
-        } else if(e.getBlock().getRelative(0, -1, 0).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, -1, 0).getType() == Material.AIR) {
             y--;
-        } else if(e.getBlock().getRelative(0, 0, 1).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, 0, 1).getType() == Material.AIR) {
             z++;
-        } else if(e.getBlock().getRelative(0, 0, -1).getType() == Material.AIR) {
+        } else if (e.getBlock().getRelative(0, 0, -1).getType() == Material.AIR) {
             z--;
         } else {
             // no air block found

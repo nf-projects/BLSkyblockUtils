@@ -42,7 +42,7 @@ public class WarUtil {
 
         // max duration countdown broadcasts
         long timeElapsed = System.currentTimeMillis() - war.startTime;
-        long timeRemaining = (war.maxDurationHours * 60 * 60 * 1000) - timeElapsed;
+        long timeRemaining = ((long) war.maxDurationHours * 60 * 60 * 1000) - timeElapsed;
         if (timeRemaining <= 0) {
             endWar();
 
@@ -56,7 +56,7 @@ public class WarUtil {
         } else if (timeRemaining <= 5 * 60 * 1000 && !war.fiveMinuteWarningSent) {
             war.broadcastToAllParticipants("&c&lThe war will end in 5 minutes!");
             war.fiveMinuteWarningSent = true;
-        } else if (timeRemaining <= 1 * 60 * 1000 && !war.oneMinuteWarningSent) {
+        } else if (timeRemaining <= 60 * 1000 && !war.oneMinuteWarningSent) {
             war.broadcastToAllParticipants("&c&lThe war will end in 1 minute!");
             war.oneMinuteWarningSent = true;
         }

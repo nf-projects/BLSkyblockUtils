@@ -80,7 +80,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
                 this.getLogger().info("Generating mine spawn locations");
                 OverworldMineSpawnLocationFinder.generateValidSpawnLocations();
-            }, 20 * 1);
+            }, 20);
 
             // generate valid netherimine spawn locations
             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
@@ -146,7 +146,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
         // ----- Leaderboards
         if (mainConfig.getBoolean("leaderboards-module")) {
             // periodically attempt to update leaderboards
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0 * 60, 20 * 10); // every 10 seconds starting 60 seconds after server start
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> attemptToUpdateLeaderboards(this), 0, 20 * 10); // every 10 seconds starting 60 seconds after server start
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -226,7 +226,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
         try {
             spawnEggManager.despawnAllMythicMobs();
         } catch (Exception e) {
-            
+
         }
 
     }

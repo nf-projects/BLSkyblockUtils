@@ -86,7 +86,7 @@ public class WarKillListener implements Listener {
             }
         }
 
-        if(found) {
+        if (found) {
             // send a message to the killer
             killer.sendMessage(colorize("&e&lKILL&7 You killed an enemy at war! &9&l+1 &fKill   &a&l+50 &fNation Points"));
         } else {
