@@ -5,6 +5,8 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.angeschossen.lands.api.LandsIntegration;
 import me.angeschossen.lands.api.nation.Nation;
 import me.kicksquare.blskyblockutils.capitols.Capitol;
@@ -12,11 +14,14 @@ import me.kicksquare.blskyblockutils.capitols.War;
 import me.kicksquare.blskyblockutils.capitols.WarUtil;
 import me.kicksquare.blskyblockutils.util.TimeFormatterUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 
 import static me.kicksquare.blskyblockutils.capitols.WarUtil.replaceBlueAndRedWithWhite;
@@ -57,6 +62,7 @@ public class AdminCommands implements CommandExecutor {
             player.sendMessage("/blskyblockutils resetallbeacons");
             player.sendMessage("/blskyblockutils listCapitols");
             player.sendMessage("/blskyblockutils setCapitolController <capitol name> <controller nation name OR None>");
+            player.sendMessage("/blskyblockutils getItemNbt");
         }
 
         if (args.length == 1) {
@@ -124,6 +130,31 @@ public class AdminCommands implements CommandExecutor {
                 }
 
                 return true;
+            }
+
+            if (args[0].equalsIgnoreCase("getItemNbt")) {
+                ItemStack item = player.getInventory().getItemInMainHand();
+                if (item.getType() == Material.AIR) {
+                    player.sendMessage("You must be holding an item!");
+                    return true;
+                }
+
+                // send info about:
+                // nbt
+                // custom model data
+                // if applicable, dye color (R G B values)
+
+                NBTItem nbtItem = new NBTItem(item);
+                player.sendMessage("NBT: " + nbtItem.toString());
+
+                if (item.getItemMeta().hasCustomModelData()) {
+                    player.sendMessage("Custom Model Data: " + item.getItemMeta().getCustomModelData());
+                }
+
+                if (item.getType() == Material.LEATHER_BOOTS || item.getType() == Material.LEATHER_CHESTPLATE || item.getType() == Material.LEATHER_HELMET || item.getType() == Material.LEATHER_LEGGINGS) {
+                    LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) item.getItemMeta();
+                    player.sendMessage("Dye Color: " + leatherArmorMeta.getColor().getRed() + " " + leatherArmorMeta.getColor().getGreen() + " " + leatherArmorMeta.getColor().getBlue());
+                }
             }
         }
 

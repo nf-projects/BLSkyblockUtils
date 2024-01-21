@@ -21,6 +21,7 @@ import me.kicksquare.blskyblockutils.playerlevel.PlayerLevelCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
+import me.kicksquare.blskyblockutils.spawners.SpawnerTick;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -208,6 +209,16 @@ public final class BLSkyblockUtils extends JavaPlugin {
             VillagerKiller.killVillagersEtc();
         }, 0, 20 * 10); // once every 10 seconds
 
+        if (mainConfig.getBoolean("spawners-module")) {
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                SpawnerTick.tick(this);
+            }, 0, 20 * 15); // once every 15 seconds
+
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                SpawnerTick.tickLadderMobs(this);
+            }, 0, 10); // once every 0.5 seconds, kill any mobs on ladders (trying to escape!)
+        }
+
     }
 
     @Override
@@ -215,7 +226,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
         try {
             spawnEggManager.despawnAllMythicMobs();
         } catch (Exception e) {
-            System.out.println("Failed to despawn all custom spawn eggs");
+            
         }
 
     }

@@ -5,6 +5,7 @@ boss-module: true
 leaderboards-module: true
 playerlevel-module: true
 capitols-module: true
+spawners-module: true
 
 respawn-mine-mobs-delay-seconds: 0.5
 
@@ -117,3 +118,16 @@ capitol_australia_buff_2: "DOUBLE_SPAWNS|0.3"
 
 capitol_north_america_buff_1: "PERMISSION|shopguiplus.pricemodifiers.sell_increase_40"
 capitol_north_america_buff_2: "POTION_EFFECT|INCREASE_DAMAGE|2"
+
+
+
+# -----------------------------------
+# SPAWNERS
+# -----------------------------------
+
+# world, region, coords, mob type, max num in region
+spawners:
+  - "spawn|spawngrinder1|248,88,133|SHEEP|3"
+  - "spawn|spawngrinder1|248,88,133|PIG|3"
+  - "spawn|spawngrinder1|248,88,133|COW|3"
+

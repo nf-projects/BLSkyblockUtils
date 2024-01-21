@@ -30,7 +30,7 @@ public class LandsMaxClaimsListener implements Listener {
         Player player = event.getPlayer();
         User user = plugin.getLuckPermsApi().getUserManager().getUser(event.getPlayer().getUniqueId());
         if (user == null) {
-            System.out.println("[login debug] User is null for " + player.getName());
+            
             return;
         }
 
@@ -58,16 +58,16 @@ public class LandsMaxClaimsListener implements Listener {
         if (highestRankClaims == 0) {
             // no rank found, set to 15 claims
             setLandsChunksPermission(player, 15);
-            System.out.println("[login debug] No rank found! Set lands.chunks permission to 15 for " + player.getName());
-            System.out.println("[login debug] Ranks: " + ranks.toString());
+            
+            
         } else if (highestRankClaims > currentMaxClaims) {
             // rank found, but it's higher than the current lands.chunks permission
             // this means there was some sort of an error
 
             // set to the highest rank's claims
             setLandsChunksPermission(player, highestRankClaims);
-            System.out.println("[login debug] Rank found! Set lands.chunks permission to " + highestRankClaims + " for " + player.getName());
-            System.out.println("[login debug] Ranks: " + ranks.toString());
+            
+            
         }
 
     }

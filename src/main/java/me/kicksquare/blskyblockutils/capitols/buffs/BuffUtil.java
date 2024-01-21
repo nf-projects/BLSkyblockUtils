@@ -29,7 +29,7 @@ public class BuffUtil {
             for (Land land : lands) {
                 if(!land.getOwnerUID().equals(player.getUniqueId())) {
                     // player needs to be the OWNER of the land, not just a member/trusted
-                    System.out.println("debug: player " + player.getName() + " is not the owner of land " + land.getName() + ". Owner uuid is " + land.getOwnerUID() + " and player uuid is " + player.getUniqueId());
+                    
                     continue;
                 }
 

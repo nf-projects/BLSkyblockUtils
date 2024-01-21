@@ -8,7 +8,7 @@ public class VillagerKiller {
         for (org.bukkit.World world : org.bukkit.Bukkit.getWorlds()) {
             for (org.bukkit.entity.Entity entity : world.getEntities()) {
                 if (entity instanceof org.bukkit.entity.ZombieVillager || entity instanceof org.bukkit.entity.WanderingTrader || entity instanceof org.bukkit.entity.TraderLlama) {
-                    System.out.println("[blskyblockutils debug] Killing " + entity.getName() + " at " + entity.getLocation().toString());
+                    
                     entity.remove();
                 }
             }
