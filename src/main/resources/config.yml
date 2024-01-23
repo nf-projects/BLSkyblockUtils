@@ -6,6 +6,7 @@ leaderboards-module: true
 playerlevel-module: true
 capitols-module: true
 spawners-module: true
+tutorial-module: true
 
 respawn-mine-mobs-delay-seconds: 0.5
 

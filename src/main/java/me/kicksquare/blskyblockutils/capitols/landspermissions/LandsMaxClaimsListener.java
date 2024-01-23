@@ -22,13 +22,13 @@ public class LandsMaxClaimsListener implements Listener {
 
     public LandsMaxClaimsListener(BLSkyblockUtils blSkyblockUtils) {
         this.plugin = blSkyblockUtils;
-        this.luckPermsApi = plugin.getLuckPermsApi();
+        this.luckPermsApi = plugin.getLuckpermsAPI();
     }
 
     @EventHandler
     public void playerFirstJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        User user = plugin.getLuckPermsApi().getUserManager().getUser(event.getPlayer().getUniqueId());
+        User user = plugin.getLuckpermsAPI().getUserManager().getUser(event.getPlayer().getUniqueId());
         if (user == null) {
 
             return;

@@ -23,3 +23,5 @@ commands:
   updatemaxclaims:
     description: Update the max claims of a given player
     permission: blskyblockutils.updatemaxclaims
+  exittutorialconfirm:
+    description: Confirm that you want to exit the tutorial

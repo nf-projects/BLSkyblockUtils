@@ -11,13 +11,10 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -132,14 +129,14 @@ public class BuffManager implements Listener {
     }
 
     public static void addTemporaryPermission(Player player, String permission) {
-        User user = plugin.getLuckPermsApi().getUserManager().getUser(player.getUniqueId());
+        User user = plugin.getLuckpermsAPI().getUserManager().getUser(player.getUniqueId());
         if (user != null) {
             Node node = PermissionNode.builder(permission)
                     .expiry(1, TimeUnit.DAYS)
                     .build();
 
             user.data().add(node);
-            plugin.getLuckPermsApi().getUserManager().saveUser(user);
+            plugin.getLuckpermsAPI().getUserManager().saveUser(user);
         } else {
             plugin.getLogger().warning("Could not find LuckPerms user for " + player.getName());
         }
