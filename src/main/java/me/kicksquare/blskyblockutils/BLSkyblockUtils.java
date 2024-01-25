@@ -24,8 +24,7 @@ import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggCommand;
 import me.kicksquare.blskyblockutils.spawneggs.CustomSpawnEggListener;
 import me.kicksquare.blskyblockutils.spawneggs.SpawnEggManager;
 import me.kicksquare.blskyblockutils.spawners.SpawnerTick;
-import me.kicksquare.blskyblockutils.tutorial.ExitTutorialConfirmCommand;
-import me.kicksquare.blskyblockutils.tutorial.TutorialEventsManager;
+import me.kicksquare.blskyblockutils.tutorial.*;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,6 +58,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
     private LuckPerms luckpermsAPI;
     private GPSAPI gpsAPI = null;
     private BukkitQuestsPlugin questAPI = null;
+    private MythicBukkit mythicBukkit = null;
 
     public static BLSkyblockUtils getPlugin() {
         return plugin;
@@ -68,8 +68,6 @@ public final class BLSkyblockUtils extends JavaPlugin {
     public void onEnable() {
         plugin = this;
 
-        MythicBukkit mythicBukkit = MythicBukkit.inst();
-
         mainConfig = SimplixBuilder
                 .fromFile(new File(getDataFolder(), "config.yml"))
                 .addInputStreamFromResource("config.yml")
@@ -78,6 +76,14 @@ public final class BLSkyblockUtils extends JavaPlugin {
                 .createConfig();
 
         getCommand("bladmin").setExecutor(new AdminCommands(this));
+
+        if (
+                mainConfig.getBoolean("mine-module")
+                        || mainConfig.getBoolean("dungeon-module")
+                        || mainConfig.getBoolean("boss-module")
+        ) {
+            mythicBukkit = MythicBukkit.inst();
+        }
 
         // ----- Mine & Nethermine
         if (mainConfig.getBoolean("mine-module")) {
@@ -234,7 +240,7 @@ public final class BLSkyblockUtils extends JavaPlugin {
             }
 
             if (Bukkit.getPluginManager().getPlugin("Quests").isEnabled()) {
-                 this.questAPI = (BukkitQuestsPlugin) Bukkit.getPluginManager().getPlugin("Quests");
+                this.questAPI = (BukkitQuestsPlugin) Bukkit.getPluginManager().getPlugin("Quests");
             } else {
                 getLogger().warning("Quests plugin not found, tutorial module will NOT work.");
                 Bukkit.getPluginManager().disablePlugin(this);
@@ -242,6 +248,12 @@ public final class BLSkyblockUtils extends JavaPlugin {
 
             Bukkit.getPluginManager().registerEvents(new TutorialEventsManager(this), this);
             getCommand("exittutorialconfirm").setExecutor(new ExitTutorialConfirmCommand(this));
+
+            // custom task types
+//            questAPI.getTaskTypeManager().registerTaskType(new CrateOpenTaskType(this));
+            questAPI.getTaskTypeManager().registerTaskType(new LandCreateTaskType(this));
+            questAPI.getTaskTypeManager().registerTaskType(new IslandCreateTaskType(this));
+            questAPI.getTaskTypeManager().registerTaskType(new ClaimChunksTaskType(this));
         }
 
     }

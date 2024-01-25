@@ -49,16 +49,12 @@ public class PapiExtension extends PlaceholderExpansion {
             return null;
         }
 
-        // 2 placeholder types:
-        // %blskyblockutils_playerlevel%
-        // %blskyblockutils_war_[status|nation_blue|nation_red|beacon_status|blue_points|red_points|time_elapsed|time_remaining|point_goal]%
-
         if (params.equalsIgnoreCase("playerlevel") && plugin.getMainConfig().getBoolean("playerlevel-module")) {
             return String.valueOf(PlayerLevelCalculator.calculatePlayerLevel((Player) player).level);
         } else if (params.startsWith("war_") && plugin.getMainConfig().getBoolean("capitols-module")) {
             return parseWarPlaceholder((Player) player, params);
         } else if (params.startsWith("tutorial_") && plugin.getMainConfig().getBoolean("tutorial-module")) {
-            return PAPITutorial.parseTutorialPlaceholder((Player) player, params);
+            return PAPITutorial.parseTutorialPlaceholder((Player) player, params, plugin);
         }
 
         return null;

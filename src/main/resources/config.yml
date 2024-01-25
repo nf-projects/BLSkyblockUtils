@@ -132,3 +132,21 @@ spawners:
   - "spawn|spawngrinder1|248,88,133|PIG|3"
   - "spawn|spawngrinder1|248,88,133|COW|3"
 
+
+
+# -----------------------------------
+# TUTORIAL
+# -----------------------------------
+
+quest-worlds: # if not specified, it will be `spawn`
+  - "4: world"
+  - "5: world"
+  - "6: ANY"
+  - "7: dungeon"
+  - "8: ANY"
+
+world-commands:
+  - "spawn: /spawn"
+  - "world: /rtp" # should be replaced with /land spawn if they have a land
+  - "SuperiorWorld: /is go"
+  - "dungeon: /warp dungeon"
